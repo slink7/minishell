@@ -14,7 +14,7 @@ libft/ :
 	git clone git@github.com:slink7/libft.git
 
 libft/libft.a : libft/
-#	git submodule update --remote libft
+	git submodule update --init --remote
 	cd libft/ ; make
 
 clean :
