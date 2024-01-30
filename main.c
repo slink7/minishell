@@ -6,12 +6,14 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 15:54:28 by scambier          #+#    #+#             */
-/*   Updated: 2024/01/29 16:46:58 by scambier         ###   ########.fr       */
+/*   Updated: 2024/01/30 13:21:29 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
 #include <stdlib.h>
+
+#include <stdio.h>
 
 #include "libft.h"
 
@@ -51,7 +53,7 @@ int	main(void)
 	init_env(&env);
 	while (1)
 	{
-		ft_printf_fd(1, "%s>", env.working_directory);
+		ft_printf_fd(1, "\033[22;34m%s>\033[0m", env.working_directory);
 		line = get_next_line(0);
 		interpret(line);
 		free(line);
