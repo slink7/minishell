@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 15:54:28 by scambier          #+#    #+#             */
-/*   Updated: 2024/01/30 13:21:29 by scambier         ###   ########.fr       */
+/*   Updated: 2024/01/30 14:32:10 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,17 @@ int	init_env(t_env *env)
 	env->working_directory = getcwd(0, 0);
 	return (1);
 }
+
+int	deinit_env(t_env *env)
+{
+	free(env->working_directory);
+	return (1);
+}
+
+//"[^"]*"
+//'[^']*'
+//[^|]+
+//
 
 int	interpret(char *line)
 {
@@ -55,8 +66,15 @@ int	main(void)
 	{
 		ft_printf_fd(1, "\033[22;34m%s>\033[0m", env.working_directory);
 		line = get_next_line(0);
+		if (!ft_strncmp(line, "exit\n", 5))
+		{
+			free(line);
+			break;
+		}
 		interpret(line);
 		free(line);
-	}	
+	}
+	get_next_line(-1);
+	deinit_env(&env);
 	return (0);
 }
