@@ -1,5 +1,6 @@
 SRC = \
-	main.c
+	main.c\
+	t_array.c
 
 OBJ_DIR = obj
 OBJ = $(addprefix $(OBJ_DIR)/, $(addsuffix .o, $(notdir $(basename $(SRC)))))
