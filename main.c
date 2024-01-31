@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 15:54:28 by scambier          #+#    #+#             */
-/*   Updated: 2024/01/30 18:59:05 by scambier         ###   ########.fr       */
+/*   Updated: 2024/01/31 21:31:05 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 
 #include "libft.h"
 #include "t_array.h"
+#include "bits.h"
 
 //operateurs : < << > >> |
 
@@ -37,81 +38,72 @@ int	deinit_env(t_env *env)
 	return (1);
 }
 
-//"[^"]*"
-//'[^']*'
-//[^|]+
-//
-
-int	get_bit(int	*src, int b)
+typedef	struct s_token
 {
-	return (*src & (1 << b)) >> b;
-}
+	char	*str;
+}	t_token;
 
-void	set_bit(int *src, int b, int v)
+t_token	*new_token(char	*str)
 {
-	*src = (*src & ~(1 << b)) | (v << b);
-}
+	t_token	*out;
 
-void	invert_bit(int *src, int b)
-{
-	set_bit(src, b, !get_bit(src, b));
-}
-
-t_array	*get_pipes(char *line)
-{
-	int		k;
-	int		is_in_quote;
-	int		*pipes;
-	int		pipe_k;
-	t_array	*out;
-
-	k = -1;
-	is_in_quote = 0;
-	pipes = ft_calloc(ft_strlen(line), sizeof(int));
-	pipe_k = 0;
-	while (line[++k])
-	{
-		if (!get_bit(&is_in_quote, 1) && line[k] == '\"')
-			invert_bit(&is_in_quote, 0);
-		if (!get_bit(&is_in_quote, 0) && line[k] == '\'')
-			invert_bit(&is_in_quote, 1);
-		if (!get_bit(&is_in_quote, 1) && !get_bit(&is_in_quote, 0) && line[k] == '|')
-			pipes[pipe_k++] = k;
-	}
-	out = new_array(pipe_k);
-	ft_memcpy(out->content, pipes, out->len * sizeof(int));
+	out = malloc(sizeof(t_token));
+	out->str = str;
 	return (out);
 }
 
-char	**moise(char *line, t_array *pos)
+void	free_token(void	*token)
 {
-	char	**out;
-	int		k;
-	
-	out = ft_calloc(pos->len + 2, sizeof(char *));
-	if (!pos->len)
+	free(((t_token*)token)->str);
+	free(token);
+}
+
+t_list	*tokenise(char *line)
+{
+	t_list	*out;
+	int		start;
+	int		index;
+	int		in_quote;
+
+	out = 0;
+	start = 0;
+	index = 0;
+	in_quote = 0;
+	while (++index)
 	{
-		*out = ft_strdup(line);
-		return (out);
+		if (!in_quote && line[index] != ' ' && line[index - 1] == ' ')
+			start = index;
+		if (!get_bit(&in_quote, 1) && line[index] == '\'')
+			invert_bit(&in_quote, 0);
+		if (!get_bit(&in_quote, 0) && line[index] == '\"')
+			invert_bit(&in_quote, 1);
+		if (!in_quote && (line[index] == ' ' || !line[index]) && line[index - 1] != ' ')
+			ft_lstadd_back(&out, ft_lstnew(new_token(ft_substr(line, start, index - start))));
+		if (!line[index])
+			break ;
 	}
-	k = 0;
-	out[k] = ft_substr(line, 0, pos->content[k]);
-	while (++k < pos->len + 1)
-		out[k] = ft_substr(line, pos->content[k - 1] + 1, pos->content[k] - pos->content[k - 1] - 1);
-	out[k] = ft_substr(line, pos->content[k], ft_strlen(line));
+	if (in_quote)
+		printf("\033[0;31mError unclosed quote (%c)\033[0m\n", get_bit(&in_quote, 0) ? '\'' : get_bit(&in_quote, 1) ? '\"' : '?');
 	return (out);
+}
+
+void	print_token_list(t_list *tokens)
+{
+	if (!tokens)
+		return ;
+	printf("[%s]\n", ((t_token *)tokens->content)->str);
+	print_token_list(tokens->next);
 }
 
 int	interpret(char *line)
 {
-	t_array *pipes;
-	char	**sep;
-
-	pipes = get_pipes(line);
-	sep = moise(line, pipes);
-	int l = -1;
-	while (++l < pipes->len + 1)
-		printf("[%s]\n", sep[l]);
+	t_list *tokens;
+	//char	**sep;
+	tokens = 0;
+	tokens = tokenise(line);
+	printf("Size : %d\n", ft_lstsize(tokens));
+	print_token_list(tokens);
+	ft_lstclear(&tokens, free_token);
 	return (1);
 }
 
