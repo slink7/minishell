@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 15:54:28 by scambier          #+#    #+#             */
-/*   Updated: 2024/01/31 21:31:05 by scambier         ###   ########.fr       */
+/*   Updated: 2024/02/01 02:59:44 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,25 +67,41 @@ t_list	*tokenise(char *line)
 
 	out = 0;
 	start = 0;
-	index = 0;
+	index = -1;
 	in_quote = 0;
-	while (++index)
+	while (++index + 1)
 	{
-		if (!in_quote && line[index] != ' ' && line[index - 1] == ' ')
-			start = index;
-		if (!get_bit(&in_quote, 1) && line[index] == '\'')
-			invert_bit(&in_quote, 0);
-		if (!get_bit(&in_quote, 0) && line[index] == '\"')
-			invert_bit(&in_quote, 1);
-		if (!in_quote && (line[index] == ' ' || !line[index]) && line[index - 1] != ' ')
+		if (line[index] == '@')
+			printf("@ i:%d len:%ld bits:%d,%d\n", index, ft_strlen(line), get_bit(&in_quote, 0), get_bit(&in_quote, 1));
+		if (!in_quote && (ft_strchr("\'\"", line[index]) || (line[index] == ' ' && line[index - 1] != ' ')))
+		{
 			ft_lstadd_back(&out, ft_lstnew(new_token(ft_substr(line, start, index - start))));
+			start = index;
+		}
+		if (ft_strchr("\'\"", line[index]) && !get_bit(&in_quote, line[index] == '\''))
+			invert_bit(&in_quote, line[index] == '\"');
 		if (!line[index])
 			break ;
 	}
 	if (in_quote)
-		printf("\033[0;31mError unclosed quote (%c)\033[0m\n", get_bit(&in_quote, 0) ? '\'' : get_bit(&in_quote, 1) ? '\"' : '?');
+		printf("\033[0;31mError unclosed quote (%d|%d|%c)\033[0m\n", get_bit(&in_quote, 0), get_bit(&in_quote, 1), get_bit(&in_quote, 0) ? '\'' : (get_bit(&in_quote, 1) ? '\"' : '?'));
 	return (out);
 }
+
+//try avec plein de while empillés
+
+/*
+if (index > 0 && !in_quote && line[index] != ' ' && line[index - 1] == ' ')
+	start = index;
+if (!get_bit(&in_quote, 0) && line[index] == '\"')
+	invert_bit(&in_quote, 1);
+if (!get_bit(&in_quote, 1) && line[index] == '\'')
+	invert_bit(&in_quote, 0);
+if (index > 0 && !in_quote && (line[index] == ' ' || line[index] == '\"' || !line[index]) && line[index - 1] != ' ')
+	ft_lstadd_back(&out, ft_lstnew(new_token(ft_substr(line, start, index - start))));
+*/
+
+//"a" bc "d 'e"fh '' ij" k"
 
 void	print_token_list(t_list *tokens)
 {
