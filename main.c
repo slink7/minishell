@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 15:54:28 by scambier          #+#    #+#             */
-/*   Updated: 2024/02/01 02:59:44 by scambier         ###   ########.fr       */
+/*   Updated: 2024/02/01 16:51:38 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ t_token	*new_token(char	*str)
 
 void	free_token(void	*token)
 {
-	free(((t_token*)token)->str);
+	free(((t_token *)token)->str);
 	free(token);
 }
 
@@ -69,26 +69,38 @@ t_list	*tokenise(char *line)
 	start = 0;
 	index = -1;
 	in_quote = 0;
-	while (++index + 1)
+	while (line[++index])
 	{
-		if (line[index] == '@')
-			printf("@ i:%d len:%ld bits:%d,%d\n", index, ft_strlen(line), get_bit(&in_quote, 0), get_bit(&in_quote, 1));
-		if (!in_quote && (ft_strchr("\'\"", line[index]) || (line[index] == ' ' && line[index - 1] != ' ')))
+		if (index > 0 && !in_quote && (line[index] == '\"' || (line[index] != ' ' && line[index - 1] == ' ') || (line[index] != ' ' && line[index - 1] == '\"')))
 		{
 			ft_lstadd_back(&out, ft_lstnew(new_token(ft_substr(line, start, index - start))));
 			start = index;
+			printf("start at : %d (%c)\n", index, line[index]);
 		}
-		if (ft_strchr("\'\"", line[index]) && !get_bit(&in_quote, line[index] == '\''))
-			invert_bit(&in_quote, line[index] == '\"');
-		if (!line[index])
-			break ;
+		if (line[index] == '\"')
+			in_quote = !in_quote;
 	}
+	if (line[index - 1] != ' ')
+		ft_lstadd_back(&out, ft_lstnew(new_token(ft_substr(line, start, index - start))));
 	if (in_quote)
 		printf("\033[0;31mError unclosed quote (%d|%d|%c)\033[0m\n", get_bit(&in_quote, 0), get_bit(&in_quote, 1), get_bit(&in_quote, 0) ? '\'' : (get_bit(&in_quote, 1) ? '\"' : '?'));
 	return (out);
 }
 
 //try avec plein de while empillés
+
+/*
+if (line[index] == '@')
+	printf("@ i:%d len:%ld bits:%d,%d\n", index, ft_strlen(line), get_bit(&in_quote, 0), get_bit(&in_quote, 1));
+
+if (!in_quote && (ft_strchr("\'\"", line[index]) || (line[index] == ' ' && line[index - 1] != ' ')))
+{
+	ft_lstadd_back(&out, ft_lstnew(new_token(ft_substr(line, start, index - start))));
+	start = index;
+}
+if (ft_strchr("\'\"", line[index]) && !get_bit(&in_quote, line[index] == '\''))
+	invert_bit(&in_quote, line[index] == '\"');
+*/
 
 /*
 if (index > 0 && !in_quote && line[index] != ' ' && line[index - 1] == ' ')
