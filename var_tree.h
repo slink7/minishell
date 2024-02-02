@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/02 00:21:42 by scambier          #+#    #+#             */
-/*   Updated: 2024/02/02 15:14:18 by scambier         ###   ########.fr       */
+/*   Updated: 2024/02/02 15:15:48 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,8 @@ void		free_var_tree(t_var_tree **tree);
 
 /**
  * Looks for the 'name' var in the BST 'tree' and returns it.
- * If 'name' var doesn't exists, it creates it where it should be, duping the 'name' as its name.
+ * If 'name' var doesn't exists, it creates it where it should be, duping the
+ * 'name' as its name.
  * @param tree the BST to search the var in
  * @param name the name of the looked for var
  * @return the new var
@@ -71,7 +72,8 @@ t_var		*var_tree_fetch(t_var_tree **tree, char *name);
 char		*get_var(t_var_tree *tree, char *name);
 
 /**
- * Sets the var 'name' to 'value', it first frees the value to be replaced if it exists and then dups 'value'.
+ * Sets the var 'name' to 'value', it first frees the value to be replaced if it
+ * exists and then dups 'value'.
  * This uses var_tree_fetch()
  * @param tree: the tree to act on
  * @param name: the variable name you look for
