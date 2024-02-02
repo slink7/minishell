@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/02 00:27:52 by scambier          #+#    #+#             */
-/*   Updated: 2024/02/02 02:17:07 by scambier         ###   ########.fr       */
+/*   Updated: 2024/02/02 14:53:44 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ t_var_tree	*new_var_tree(t_var	*var)
 	return (out);
 }
 
-void		free_var(t_var **var)
+void	free_var(t_var **var)
 {
 	free((*var)->name);
 	if ((*var)->value)
@@ -45,7 +45,7 @@ void		free_var(t_var **var)
 	*var = 0;
 }
 
-void		free_var_tree(t_var_tree **tree)
+void	free_var_tree(t_var_tree **tree)
 {
 	if (*tree)
 	{
