@@ -6,14 +6,14 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 15:41:10 by scambier          #+#    #+#             */
-/*   Updated: 2024/01/30 15:52:38 by scambier         ###   ########.fr       */
+/*   Updated: 2024/02/03 03:04:53 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef T_ARRAY_H
 # define T_ARRAY_H
 
-typedef	struct s_array
+typedef struct s_array
 {
 	int	*content;
 	int	len;
