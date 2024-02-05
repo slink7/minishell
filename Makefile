@@ -1,6 +1,6 @@
 SRC = \
 	main.c\
-	t_array.c
+	tokenise.c
 
 OBJ_DIR = obj
 OBJ = $(addprefix $(OBJ_DIR)/, $(addsuffix .o, $(notdir $(basename $(SRC)))))
@@ -27,7 +27,7 @@ fclean : clean
 re : fclean all
 
 $(NAME) : $(OBJ)
-	cc -o $(NAME) $(OBJ) -Llibft -lft
+	cc -o $(NAME) $(OBJ) -Llibft -lft -lreadline
 
 $(OBJ_DIR) :
 	mkdir $(OBJ_DIR)
