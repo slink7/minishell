@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 15:54:28 by scambier          #+#    #+#             */
-/*   Updated: 2024/02/05 15:36:18 by scambier         ###   ########.fr       */
+/*   Updated: 2024/02/05 16:13:50 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 #include <stdlib.h>
 #include <readline/readline.h>
 #include <readline/history.h>
+//#include <bits/sigaction.h>
+#include <signal.h>
 
 #include <stdio.h>
 
@@ -57,18 +59,31 @@ int	interpret(char *line)
 	return (1);
 }
 
+void	sig_handler(int signum)
+{
+	if (signum == SIGINT)
+	{
+		ft_printf_fd(1, "\n");
+		rl_on_new_line();
+		rl_replace_line("", 0);
+		rl_redisplay();
+	}
+}
+
 int	main(void)
 {
 	t_env	env;
 	char	*line;
 
+	signal(SIGINT, sig_handler);
+	signal(SIGQUIT, sig_handler);
 	init_env(&env);
 	while (1)
 	{
 		line = readline("\033[22;34mminishell>\033[0m");
 		if (line && *line)
 			add_history(line);
-		if (!ft_strncmp(line, "exit", 5))
+		if (!line || !ft_strncmp(line, "exit", 5))
 		{
 			free(line);
 			break ;
