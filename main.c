@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 15:54:28 by scambier          #+#    #+#             */
-/*   Updated: 2024/02/05 16:17:06 by scambier         ###   ########.fr       */
+/*   Updated: 2024/02/05 17:18:51 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ void	print_token_list(t_list *tokens)
 {
 	if (!tokens)
 		return ;
-	printf("[%s]\n", ((t_token *)tokens->content)->str);
+	f_printf_fd(1, "[%s]\n", ((t_token *)tokens->content)->str);
 	print_token_list(tokens->next);
 }
 

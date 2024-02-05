@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/05 14:31:37 by scambier          #+#    #+#             */
-/*   Updated: 2024/02/05 15:38:00 by scambier         ###   ########.fr       */
+/*   Updated: 2024/02/05 18:48:46 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,13 @@
 #include "libft.h"
 #include "tokenise.h"
 
-t_token	*new_token(char	*str)
+t_token	*new_token(char	*str, enum e_token_type type)
 {
 	t_token	*out;
 
 	out = malloc(sizeof(t_token));
 	out->str = str;
+	out->type = type;
 	return (out);
 }
 
@@ -29,6 +30,48 @@ void	free_token(void	*token)
 	free(((t_token *)token)->str);
 	free(token);
 }
+
+/*
+enum e_token_type
+{
+	VALUE,
+	SINGLE_QUOTE,
+	DOUBLE_QUOTE,
+	PARENTHESIS,
+	RD_VARIABLE,
+	WR_VARIABLE,
+	PIPE,
+	RD_REDIRECT,
+	RD_A_REDIRECT,
+	WR_REDIRECT,
+	WR_H_REDIRECT,
+};
+*/
+
+// enum e_token_type	get_token_type(char *str)
+// {
+// 	if (*str == 0)
+// 		return (EMPTY);
+// 	if (*str == '\'')
+// 		return (SINGLE_QUOTE);
+// 	else if (*str == '\"')
+// 		return (DOUBLE_QUOTE);
+// 	else if (*str == '(')
+// 		return (PARENTHESIS);
+// 	else if (*str == '$')
+// 		return (RD_VARIABLE);
+// 	else if (*str == '|')
+// 		return (PIPE);
+// 	else if (*str == '<')
+// 		if (*(str + 1) == '<')
+// 			return (RD_H_REDIRECT)
+// 		else
+// 			return (RD_REDIRECT);
+// 	else if (*str == '>')
+// 	else if (ft_strchr(str, '='))
+// 		return (WR_VARIABLE);
+	
+// }
 
 int	get_next_token(t_token **out, char *line)
 {
@@ -56,9 +99,6 @@ int	get_next_token(t_token **out, char *line)
 	*out = new_token(ft_substr(line, start, index - start));
 	return (index);
 }
-
-//"a" bc "d 'e"fh '' ij" k"
-//"a" b(c "d 'e"fh '') ij" k"
 
 t_list	*tokenise(char *line)
 {
