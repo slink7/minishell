@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 15:54:28 by scambier          #+#    #+#             */
-/*   Updated: 2024/02/05 16:13:50 by scambier         ###   ########.fr       */
+/*   Updated: 2024/02/05 16:17:06 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 #include <stdlib.h>
 #include <readline/readline.h>
 #include <readline/history.h>
-//#include <bits/sigaction.h>
 #include <signal.h>
 
 #include <stdio.h>
@@ -91,7 +90,6 @@ int	main(void)
 		interpret(line);
 		free(line);
 	}
-	get_next_line(-1);
 	deinit_env(&env);
 	return (0);
 }
