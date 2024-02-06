@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/05 14:31:37 by scambier          #+#    #+#             */
-/*   Updated: 2024/02/05 18:48:46 by scambier         ###   ########.fr       */
+/*   Updated: 2024/02/06 14:59:29 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,52 +31,38 @@ void	free_token(void	*token)
 	free(token);
 }
 
-/*
-enum e_token_type
+enum e_token_type	get_token_type(char *str)
 {
-	VALUE,
-	SINGLE_QUOTE,
-	DOUBLE_QUOTE,
-	PARENTHESIS,
-	RD_VARIABLE,
-	WR_VARIABLE,
-	PIPE,
-	RD_REDIRECT,
-	RD_A_REDIRECT,
-	WR_REDIRECT,
-	WR_H_REDIRECT,
-};
-*/
-
-// enum e_token_type	get_token_type(char *str)
-// {
-// 	if (*str == 0)
-// 		return (EMPTY);
-// 	if (*str == '\'')
-// 		return (SINGLE_QUOTE);
-// 	else if (*str == '\"')
-// 		return (DOUBLE_QUOTE);
-// 	else if (*str == '(')
-// 		return (PARENTHESIS);
-// 	else if (*str == '$')
-// 		return (RD_VARIABLE);
-// 	else if (*str == '|')
-// 		return (PIPE);
-// 	else if (*str == '<')
-// 		if (*(str + 1) == '<')
-// 			return (RD_H_REDIRECT)
-// 		else
-// 			return (RD_REDIRECT);
-// 	else if (*str == '>')
-// 	else if (ft_strchr(str, '='))
-// 		return (WR_VARIABLE);
-	
-// }
+	if (*str == 0)
+		return (EMPTY);
+	if (*str == '\'')
+		return (SINGLE_QUOTE);
+	else if (*str == '\"')
+		return (DOUBLE_QUOTE);
+	else if (*str == '(')
+		return (PARENTHESIS);
+	else if (*str == '$')
+		return (RD_VARIABLE);
+	else if (*str == '|')
+		return (PIPE);
+	else if (!ft_strncmp(str, "<<", 2))
+		return (RD_H_REDIRECT);
+	else if (*str == '<')
+		return (RD_REDIRECT);
+	else if (!ft_strncmp(str, ">>", 2))
+		return (WR_A_REDIRECT);
+	else if (*str == '>')
+		return (WR_REDIRECT);
+	else if (ft_strchr(str, '='))
+		return (WR_VARIABLE);
+	return (VALUE);
+}
 
 int	get_next_token(t_token **out, char *line)
 {
-	int	index;
-	int	start;
+	int		index;
+	int		start;
+	char	*temp;
 
 	if (!*line)
 	{
@@ -96,7 +82,8 @@ int	get_next_token(t_token **out, char *line)
 	else
 		while (line[index] && !ft_strchr(" \'\"(", line[index]))
 			index++;
-	*out = new_token(ft_substr(line, start, index - start));
+	temp = ft_substr(line, start, index - start);
+	*out = new_token(temp, get_token_type(temp));
 	return (index);
 }
 
