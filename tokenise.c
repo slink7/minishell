@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/05 14:31:37 by scambier          #+#    #+#             */
-/*   Updated: 2024/02/06 14:59:29 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/06 20:47:10 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 #include "libft.h"
 #include "tokenise.h"
+#include "t_command.h"
 
 t_token	*new_token(char	*str, enum e_token_type type)
 {
@@ -102,6 +103,60 @@ t_list	*tokenise(char *line)
 			break ;
 		ft_lstadd_back(&out, ft_lstnew(tok));
 		line += ret;
+	}
+	return (out);
+}
+
+char	*eval_tok(t_token *tok)
+{
+	if (tok->type == DOUBLE_QUOTE)
+		return (ft_substr(tok->str, 1, ft_strlen(tok->str) - 2));
+	else if (tok->type == SINGLE_QUOTE)
+		return (ft_substr(tok->str, 1, ft_strlen(tok->str) - 2));
+	else if (tok->type == VALUE)
+		return (ft_strdup(tok->str));
+	else return (0);
+}
+
+t_token	*tok_refine(t_list **tok)
+{
+	t_token	*out;
+	t_token	*t;
+
+	if (!*tok)
+		return (0);
+	t = (t_token*)(*tok)->content;
+	if (t->type >= RD_REDIRECT && t->type <= WR_A_REDIRECT)
+	{
+		if (!(*tok)->next || ((t_token*)(*tok)->next->content)->type == EMPTY)
+		{
+			ft_printf_fd(2, "Error: token \"%s\" needs following token\n", t->str);
+			return (0);
+		}
+		out = new_token(eval_tok((*tok)->next->content), t->type);
+		*tok = (*tok)->next->next;
+	}
+	else if (t->type >= VALUE && t->type <= DOUBLE_QUOTE)
+	{
+		out = new_token(eval_tok((*tok)->content), VALUE);
+		*tok = (*tok)->next;
+	}
+	else
+		out = 0;
+	return (out);
+}
+
+t_list	*toks_refine(t_list *toks)
+{
+	t_list	*out;
+	t_token	*temp;
+
+	out = 0;
+	temp = tok_refine(&toks);
+	while (temp)
+	{
+		ft_lstadd_back(&out, ft_lstnew(temp));
+		temp = tok_refine(&toks);
 	}
 	return (out);
 }
