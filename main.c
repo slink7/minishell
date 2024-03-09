@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 15:54:28 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/06 21:05:25 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/08 18:41:30 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,15 +123,13 @@ void	get_command(t_command *out, char *str)
 	out->fd_in = 0;
 	out->fd_out = 1;
 	out->cmd = 0;
+	ft_printf_fd(1, "\nTokenising\n");
 	toks = tokenise(str);
 	ft_printf_fd(1, "\nCommand : \"%s\"\n\tRaw :\n", str);
 	print_token_list(toks);
 	t_list *e = toks_refine(toks);
 	ft_printf_fd(1, "\tRefined :\n");
 	print_token_list(e);
-
-	// parse_cmd_in(str, out);
-	// parse_cmd_out(str, out);
 }
 
 int	interpret(char *line)

@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/05 14:31:37 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/06 20:47:10 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/08 18:43:38 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,14 +74,16 @@ int	get_next_token(t_token **out, char *line)
 	while (line[index] == ' ')
 		index++;
 	start = index;
-	if (line[index] == '\"')
+	if (line[index] == '<')
+		index += 1 + (line[index + 1] == '<');
+	else if (line[index] == '>')
+		index += 1 + (line[index + 1] == '>');
+	else if (line[index] == '\"')
 		index += ft_strchri(line + index + 1, '\"') + 2;
 	else if (line[index] == '\'')
 		index += ft_strchri(line + index + 1, '\'') + 2;
-	else if (line[index] == '(')
-		index += ft_strchri(line + index + 1, ')') + 2;
 	else
-		while (line[index] && !ft_strchr(" \'\"(", line[index]))
+		while (line[index] && !ft_strchr(" \'\"<>", line[index]))
 			index++;
 	temp = ft_substr(line, start, index - start);
 	*out = new_token(temp, get_token_type(temp));
@@ -102,6 +104,7 @@ t_list	*tokenise(char *line)
 		if (!tok)
 			break ;
 		ft_lstadd_back(&out, ft_lstnew(tok));
+		ft_printf_fd(1, tok->str);
 		line += ret;
 	}
 	return (out);
@@ -115,7 +118,8 @@ char	*eval_tok(t_token *tok)
 		return (ft_substr(tok->str, 1, ft_strlen(tok->str) - 2));
 	else if (tok->type == VALUE)
 		return (ft_strdup(tok->str));
-	else return (0);
+	ft_printf_fd(2, "Error : ")
+	return (0);
 }
 
 t_token	*tok_refine(t_list **tok)
