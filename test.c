@@ -34,23 +34,44 @@ void	escape_quoted(char *str)
 {
 	int fk;
 	int tk;
-
 	int in;
+	int	esc;
 
 	fk = 0;
 	tk = 0;
 	in = 0;
 	while (str[fk])
 	{
-		if (str[fk] == '\"')
+		if (in == 0 && str[fk] == '\"')
 		{
-			in = !in;
+			in = 2;
 			fk++;
-			continue ;
+			continue;
+		}
+		else if (in == 0 && str[fk] == '\'')
+		{
+			in = 1;
+			fk++;
+			continue;
+		}
+		else if (in == 1 && str[fk] == '\'')
+		{
+			in = 0;
+			fk++;
+			continue;
+		}
+		else if (in == 2 && str[fk] == '\"')
+		{
+			in = 0;
+			fk++;
+			continue;
 		}
 		else
 		{
-			str[tk++] = str[fk++] + in * 128;
+			if (str[fk] >= 0)
+				str[tk++] = str[fk++] - (!!in * 128);
+			else
+				str[tk++] = str[fk++];
 			if (fk > tk)
 				str[fk - 1] = 0;
 		}
@@ -87,6 +108,17 @@ void	strend(char *str)
 	*str = temp;
 }
 
+void	strnesc(char *str, int len)
+{
+	if (!str || !*str)
+		return ;
+	if (len > 0)
+		while (--len >= 0)
+			*str++ -= 128;
+	else
+		strnesc(str, ft_strlen(str));
+}
+
 t_bst *bst;
 
 void	expand_variables(char **str)
@@ -94,22 +126,34 @@ void	expand_variables(char **str)
 	t_strbuilder	*builder;
 	int 			chr;
 	int				k;
+	char			*temp;
+	int m = 0;
 
-	chr = ft_strchri((*str), '$');
-	k = 0;
 	builder = ft_strbuilder_new();
-	while (chr)
+	k = 0;
+	chr = ft_strchri((*str), '$');
+	while (chr > -1)
 	{
-		ft_strbuilder_addstr(builder, (*str) + k, chr);
+		if (chr > 0)
+			ft_strbuilder_addstr(builder, (*str) + k, chr);
 		k += chr + 1;
-		
-		int ve = strfchr((*str) + k, w, 1);
-		strend((*str) + k + ve);
-		printf("Fetching %s: %s\n", (*str) + k, (char *)ft_bst_getvar(bst, (*str) + k));
-		ft_strbuilder_addstr(builder, ft_bst_getvar(bst, (*str) + k), 0);
-		strend((*str) + k + ve);
-		k += ve;
-
+	
+		if (count_(*str, '\'', k) % 2 == 0)
+		{
+			int ve = strfchr((*str) + k, w, 1);
+			strend((*str) + k + ve);
+			temp = ft_bst_getvar(bst, (*str) + k);
+			if (temp && *temp)
+			{
+				temp = ft_strdup(temp);
+				//printf("Fetching $%s: \"%s\"\n", (*str) + k, temp);
+				strnesc(temp, 0);
+				ft_strbuilder_addstr(builder, temp, 0);
+				free(temp);
+			}
+			strend((*str) + k + ve);
+			k += ve;
+		}
 		chr = ft_strchri((*str) + k, '$');
 	}
 	ft_strbuilder_addstr(builder, (*str) + k, 0);
@@ -120,21 +164,43 @@ void	expand_variables(char **str)
 
 void	parse(char *line)
 {
-	printf("\nParsing : [%s]\n", line);
+	char ** commands;
+	printf("\nParsing : \t[%s]\n", line);
 	expand_variables(&line);
-	printf("After var expansion :\n[%s]\n", line);
-	free(line);
+	//printf("After var expansion :\n\t[%s]\n", line);
+	escape_quoted(line);
+	//printf("After quote eval :\n\t[%s]\n", line);
+	printf("Final :\n");
+	commands = ft_split(line, '|');
+	while (*commands)
+	{
+		printf("\t");
+		char **words = ft_split(*commands++, ' ');
+		while  (*words)
+		{
+			unescape(*words);
+			printf("[%s] ", *words++);
+		}
+		printf("\n");
+	}
+	printf("\n");
 }
 
 int	main(int argc, char **argv)
 {
-	ft_bst_setvar(&bst, "ARG", "1 2 3   4");
+	ft_bst_setvar(&bst, "ARG", "1 2");
 	ft_bst_setvar(&bst, "SPACE", " ");
+	ft_bst_setvar(&bst, "EMPTY", "");
 	ft_bst_setvar(&bst, "PIPE", "|");
+	ft_bst_setvar(&bst, "CMD", "\"t .txt\"");
 
-
-	parse(ft_strdup("egrep $ARG < \"in .txt\" | cat >$NOT $ARG"));
-	parse(ft_strdup("echo \"$PIPE$ARG\"\'$PIPE\'"));
+	//split avec fonction plutot que char
+	parse(ft_strdup("egrep $ARGS$ARG <   \"in .txt\" | cat>$NOT $ARG"));
+	parse(ft_strdup("echo \"$PIPE\"\'$PIPE\'"));
+	parse(ft_strdup("echo \"$PIPE\" \'$PIPE\'"));
+	parse(ft_strdup("echo \"$PIPE\"|\'$PIPE\'"));
+	parse(ft_strdup("cat $CMD\"a b\""));
+	parse(ft_strdup("echo $SPACE$EMPTY$SPACE$NOT$SPACE."));
 
 	ft_bst_free(&bst);
 	return 0;
