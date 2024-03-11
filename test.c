@@ -140,19 +140,20 @@ void	expand_variables(char **str)
 	
 		if (count_(*str, '\'', k) % 2 == 0)
 		{
-			int ve = strfchr((*str) + k, w, 1);
-			strend((*str) + k + ve);
+			char *ve = ft_strchrf((*str) + k, w, 1);
+			if (!ve)
+				ve = (*str) + ft_strlen(*str);
+			strend(ve);
 			temp = ft_bst_getvar(bst, (*str) + k);
 			if (temp && *temp)
 			{
 				temp = ft_strdup(temp);
-				//printf("Fetching $%s: \"%s\"\n", (*str) + k, temp);
 				strnesc(temp, 0);
 				ft_strbuilder_addstr(builder, temp, 0);
 				free(temp);
 			}
-			strend((*str) + k + ve);
-			k += ve;
+			strend(ve);
+			k += ve - (*str) - k;
 		}
 		chr = ft_strchri((*str) + k, '$');
 	}
@@ -160,6 +161,11 @@ void	expand_variables(char **str)
 	free(*str);
 	*str = ft_strbuilder_build(builder);
 	ft_strbuilder_free(&builder);
+}
+
+int	s(int c)
+{
+	return (c == ' ' || c == '\t');
 }
 
 void	parse(char *line)
@@ -175,7 +181,7 @@ void	parse(char *line)
 	while (*commands)
 	{
 		printf("\t");
-		char **words = ft_split(*commands++, ' ');
+		char **words = ft_splitf(*commands++, s);
 		while  (*words)
 		{
 			unescape(*words);
@@ -195,12 +201,13 @@ int	main(int argc, char **argv)
 	ft_bst_setvar(&bst, "CMD", "\"t .txt\"");
 
 	//split avec fonction plutot que char
-	parse(ft_strdup("egrep $ARGS$ARG <   \"in .txt\" | cat>$NOT $ARG"));
+	parse(ft_strdup("egrep $ARGS$ARG < \t  \"in .txt\" | cat>$NOT $ARG"));
 	parse(ft_strdup("echo \"$PIPE\"\'$PIPE\'"));
 	parse(ft_strdup("echo \"$PIPE\" \'$PIPE\'"));
 	parse(ft_strdup("echo \"$PIPE\"|\'$PIPE\'"));
 	parse(ft_strdup("cat $CMD\"a b\""));
 	parse(ft_strdup("echo $SPACE$EMPTY$SPACE$NOT$SPACE."));
+	parse(ft_strdup("echo nothing>out"));
 
 	ft_bst_free(&bst);
 	return 0;
