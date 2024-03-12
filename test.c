@@ -24,34 +24,38 @@ int	s(int c)
 	return (c == ' ' || c == '\t');
 }
 
+void	strnesc(char *str, int len)
+{
+	if (!str || !*str || len < 0)
+		return ;
+	if (len > 0)
+		while (--len >= 0)
+			str[len] -= (str[len] >= 0) * 128;
+	else
+		strnesc(str, ft_strlen(str));
+}
+
 void	escape_quoted(char *str)
 {
-	int fk;
-	int tk;
-	int in;
-	int	esc;
+	static	char	*quotes = "\'\"";
+	char			*next;
+	int				fk;
 
-	fk = 0;
-	tk = 0;
-	in = 0;
-	while (str[fk])
+	fk = -1;
+	while (str[++fk])
 	{
-		if (in == 0 && str[fk] == '\"' && ++fk)
-			in = 2;
-		else if (in == 0 && str[fk] == '\'' && ++fk)
-			in = 1;
-		else if (in == 1 && str[fk] == '\'' && ++fk)
-			in = 0;
-		else if (in == 2 && str[fk] == '\"' && ++fk)
-			in = 0;
-		else
+		if (ft_strchr(quotes, str[fk]))
 		{
-			if (str[fk] >= 0)
-				str[tk++] = str[fk++] - (!!in * 128);
-			else
-				str[tk++] = str[fk++];
-			if (fk > tk)
-				str[fk - 1] = 0;
+			next = ft_strchr(str + fk + 1, str[fk]);
+			if (!next)
+			{
+				printf("Error ! missing quote %c %s\n", str[fk], str + fk + 1);
+				return ;
+			}
+			ft_strlcpy(str + fk, str + fk + 1, ft_strlen(str + fk));
+			ft_strlcpy(next - 1, next, ft_strlen(next) + 1);
+			strnesc(str + fk, next - str - fk - 1);
+			fk = next - str - 2;
 		}
 	}
 }
@@ -86,16 +90,6 @@ void	strend(char *str)
 	*str = temp;
 }
 
-void	strnesc(char *str, int len)
-{
-	if (!str || !*str)
-		return ;
-	if (len > 0)
-		while (--len >= 0)
-			*str++ -= 128;
-	else
-		strnesc(str, ft_strlen(str));
-}
 
 t_bst *bst;
 
@@ -182,9 +176,10 @@ int	main(int argc, char **argv)
 	ft_bst_setvar(&bst, "PIPE", "|");
 	ft_bst_setvar(&bst, "CMD", "\"t .txt\"");
 
-	//split avec fonction plutot que char
+	// split avec fonction plutot que char
+	parse(ft_strdup("ABCDEF\"0123\"ABC\"0\"B\"1\"D"));
 	parse(ft_strdup("egrep $ARGS$ARG < \t  \"in .txt\" | cat>$NOT $ARG"));
-	parse(ft_strdup("echo \"$PIPE\"\'$PIPE\'"));
+	parse(ft_strdup("echo \"$PIPE\"\'$PIPE\'\"Another\"$SPACE One"));
 	parse(ft_strdup("echo \"$PIPE\" \'$PIPE\'"));
 	parse(ft_strdup("echo \"$PIPE|\"|\'|$PIPE\'"));
 	parse(ft_strdup("cat $CMD\"a b\""));
