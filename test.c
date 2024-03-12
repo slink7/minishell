@@ -70,7 +70,7 @@ void	unescape(char *str)
 	}
 }
 
-int		count_(char *str, char c, int len)
+int		strcount(char *str, char c, int len)
 {
 	int	out;
 
@@ -93,12 +93,39 @@ void	strend(char *str)
 
 t_bst *bst;
 
+void	add_var(t_strbuilder *builder, char *str, int *at)
+{
+	char	*temp;
+	char	*ve;
+
+	if (strcount(str, '\'', *at) % 2 == 0)
+	{
+		ve = ft_strchrf(str + *at, w, 1);
+		if (!ve)
+			ve = str + ft_strlen(str);
+		strend(ve);
+		temp = ft_bst_getvar(bst, str + *at);
+		if (temp && *temp)
+		{
+			temp = ft_strdup(temp);
+			strnesc(temp, 0);
+			ft_strbuilder_addstr(builder, temp, 0);
+			free(temp);
+		}
+		strend(ve);
+		*at += ve - str - *at;
+	}
+	else
+		ft_strbuilder_addchar(builder, '$');
+}
+
 void	expand_variables(char **str)
 {
 	t_strbuilder	*builder;
 	int 			chr;
 	int				k;
 	char			*temp;
+	char			*ve;
 
 	builder = ft_strbuilder_new();
 	k = 0;
@@ -108,26 +135,7 @@ void	expand_variables(char **str)
 		if (chr > 0)
 			ft_strbuilder_addstr(builder, (*str) + k, chr);
 		k += chr + 1;
-
-		if (count_(*str, '\'', k) % 2 == 0)
-		{
-			char *ve = ft_strchrf((*str) + k, w, 1);
-			if (!ve)
-				ve = (*str) + ft_strlen(*str);
-			strend(ve);
-			temp = ft_bst_getvar(bst, (*str) + k);
-			if (temp && *temp)
-			{
-				temp = ft_strdup(temp);
-				strnesc(temp, 0);
-				ft_strbuilder_addstr(builder, temp, 0);
-				free(temp);
-			}
-			strend(ve);
-			k += ve - (*str) - k;
-		}
-		else
-			ft_strbuilder_addchar(builder, '$');
+		add_var(builder, *str, &k);
 		chr = ft_strchri((*str) + k, '$');
 	}
 	ft_strbuilder_addstr(builder, (*str) + k, 0);
@@ -189,19 +197,3 @@ int	main(int argc, char **argv)
 	ft_bst_free(&bst);
 	return 0;
 }
-
-// https://unix.stackexchange.com/questions/234755/command-line-processing-tokens-and-metacharacters
-//  This is not a very good explanation. A token is a sequence of characters
-//  that forms a word or punctuation sign. Characters like < and | are part of
-//  tokens too. You may call them metacharacters but this is not useful
-//  terminology. The basic rules are:
-
-// Whitespace is not part of a token and separates tokens.
-// A token is made up of ordinary characters, or of operator
-// characters ()<>&|;, but not both. For example, foo<@a&>b consists
-// of the tokens foo (ordinary), < (operator), @a (ordinary),
-// &> (operator) and b.
-// Then there are additional rules about quoting: special characters
-// lose their meaning if they're quotes, with different rules depending
-// on the type of quote. For example, foo'&&'bar\|qux is a single token
-// with the character sequence foo&&bar|qux.
