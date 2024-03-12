@@ -4,24 +4,9 @@
 
 #include "libft.h"
 
-int w(int c)
+int	w(int c)
 {
 	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_';
-}
-
-int W(int c)
-{
-	return !w(c);
-}
-
-int	o(int c)
-{
-	return c == '>' || c == '<' || c == '|';
-}
-
-int	s(int c)
-{
-	return (c == ' ' || c == '\t');
 }
 
 void	strnesc(char *str, int len)
@@ -148,8 +133,8 @@ void	expand_variables(char **str)
 
 void	parse(char *line)
 {
-	int	k;
-	char ** commands;
+	int		k;
+	char	**commands;
 	t_list	*t;
 	t_list	*tok;
 
