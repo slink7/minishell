@@ -99,7 +99,6 @@ void	expand_variables(char **str)
 	int 			chr;
 	int				k;
 	char			*temp;
-	int m = 0;
 
 	builder = ft_strbuilder_new();
 	k = 0;
@@ -109,7 +108,7 @@ void	expand_variables(char **str)
 		if (chr > 0)
 			ft_strbuilder_addstr(builder, (*str) + k, chr);
 		k += chr + 1;
-	
+
 		if (count_(*str, '\'', k) % 2 == 0)
 		{
 			char *ve = ft_strchrf((*str) + k, w, 1);
@@ -127,6 +126,8 @@ void	expand_variables(char **str)
 			strend(ve);
 			k += ve - (*str) - k;
 		}
+		else
+			ft_strbuilder_addchar(builder, '$');
 		chr = ft_strchri((*str) + k, '$');
 	}
 	ft_strbuilder_addstr(builder, (*str) + k, 0);
