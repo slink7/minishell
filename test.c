@@ -37,9 +37,9 @@ void	strnesc(char *str, int len)
 
 void	escape_quoted(char *str)
 {
-	static	char	*quotes = "\'\"";
-	char			*next;
-	int				fk;
+	static char	*quotes = "\'\"";
+	char		*next;
+	int			fk;
 
 	fk = -1;
 	while (str[++fk])
@@ -177,7 +177,6 @@ int	main(int argc, char **argv)
 	ft_bst_setvar(&bst, "PIPE", "|");
 	ft_bst_setvar(&bst, "CMD", "\"t .txt\"");
 
-	// split avec fonction plutot que char
 	parse(ft_strdup("ABCDEF\"0123\"ABC\"0\"B\"1\"D"));
 	parse(ft_strdup("egrep $ARGS$ARG < \t  \"in .txt\" | cat>$NOT $ARG"));
 	parse(ft_strdup("echo \"$PIPE\"\'$PIPE\'\"Another\"$SPACE One"));
