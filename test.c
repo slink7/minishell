@@ -36,30 +36,14 @@ void	escape_quoted(char *str)
 	in = 0;
 	while (str[fk])
 	{
-		if (in == 0 && str[fk] == '\"')
-		{
+		if (in == 0 && str[fk] == '\"' && ++fk)
 			in = 2;
-			fk++;
-			continue;
-		}
-		else if (in == 0 && str[fk] == '\'')
-		{
+		else if (in == 0 && str[fk] == '\'' && ++fk)
 			in = 1;
-			fk++;
-			continue;
-		}
-		else if (in == 1 && str[fk] == '\'')
-		{
+		else if (in == 1 && str[fk] == '\'' && ++fk)
 			in = 0;
-			fk++;
-			continue;
-		}
-		else if (in == 2 && str[fk] == '\"')
-		{
+		else if (in == 2 && str[fk] == '\"' && ++fk)
 			in = 0;
-			fk++;
-			continue;
-		}
 		else
 		{
 			if (str[fk] >= 0)
@@ -157,33 +141,36 @@ void	expand_variables(char **str)
 	ft_strbuilder_free(&builder);
 }
 
-
 #include "tokenise.h"
 
 void	parse(char *line)
 {
+	int	k;
 	char ** commands;
-	printf("\nParsing : \t[%s]\n", line);
+	t_list	*t;
+	t_list	*tok;
+
+	printf("%s\n", line);
 	expand_variables(&line);
 	escape_quoted(line);
-	printf("Final :\n");
 	commands = ft_split(line, '|');
-	while (*commands)
+	k = -1;
+	while (commands[++k])
 	{
+		tok = tokenise(commands[k]);
+		t = tok;
 		printf("\t");
-		t_list *tok = tokenise(*commands);
-		while (tok)
+		while (t)
 		{
-			unescape(((t_token *)tok->content)->str);
-			printf("[%s] ", ((t_token *)tok->content)->str);
-			tok = tok->next;
+			unescape(((t_token *)t->content)->str);
+			printf("[%s] ", ((t_token *)t->content)->str);
+			t = t->next;
 		}
-		ft_lstclear(&tok, free_token);
 		printf("\n");
-		//free(*commands);
-		commands++;
+		ft_lstclear(&tok, free_token);
 	}
-	free(commands);
+	printf("\n");
+	ft_strarrfree(commands);
 	free(line);
 }
 
@@ -199,7 +186,7 @@ int	main(int argc, char **argv)
 	parse(ft_strdup("egrep $ARGS$ARG < \t  \"in .txt\" | cat>$NOT $ARG"));
 	parse(ft_strdup("echo \"$PIPE\"\'$PIPE\'"));
 	parse(ft_strdup("echo \"$PIPE\" \'$PIPE\'"));
-	parse(ft_strdup("echo \"$PIPE\"|\'$PIPE\'"));
+	parse(ft_strdup("echo \"$PIPE|\"|\'|$PIPE\'"));
 	parse(ft_strdup("cat $CMD\"a b\""));
 	parse(ft_strdup("echo $SPACE$EMPTY$SPACE$NOT$SPACE."));
 	parse(ft_strdup("echo nothing>out"));
