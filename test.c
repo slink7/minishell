@@ -19,15 +19,9 @@ int	o(int c)
 	return c == '>' || c == '<' || c == '|';
 }
 
-int	strfchr(char *str, int(*f)(int), int inverted)
+int	s(int c)
 {
-	int	k;
-
-	k = -1;
-	while (str[++k])
-		if (f(str[k]) ^ inverted)
-			return (k);
-	return (k);
+	return (c == ' ' || c == '\t');
 }
 
 void	escape_quoted(char *str)
@@ -163,33 +157,34 @@ void	expand_variables(char **str)
 	ft_strbuilder_free(&builder);
 }
 
-int	s(int c)
-{
-	return (c == ' ' || c == '\t');
-}
+
+#include "tokenise.h"
 
 void	parse(char *line)
 {
 	char ** commands;
 	printf("\nParsing : \t[%s]\n", line);
 	expand_variables(&line);
-	//printf("After var expansion :\n\t[%s]\n", line);
 	escape_quoted(line);
-	//printf("After quote eval :\n\t[%s]\n", line);
 	printf("Final :\n");
 	commands = ft_split(line, '|');
 	while (*commands)
 	{
 		printf("\t");
-		char **words = ft_splitf(*commands++, s);
-		while  (*words)
+		t_list *tok = tokenise(*commands);
+		while (tok)
 		{
-			unescape(*words);
-			printf("[%s] ", *words++);
+			unescape(((t_token *)tok->content)->str);
+			printf("[%s] ", ((t_token *)tok->content)->str);
+			tok = tok->next;
 		}
+		ft_lstclear(&tok, free_token);
 		printf("\n");
+		//free(*commands);
+		commands++;
 	}
-	printf("\n");
+	free(commands);
+	free(line);
 }
 
 int	main(int argc, char **argv)

@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/05 14:31:37 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/08 18:43:38 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/11 20:00:17 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,6 @@ t_list	*tokenise(char *line)
 		if (!tok)
 			break ;
 		ft_lstadd_back(&out, ft_lstnew(tok));
-		ft_printf_fd(1, tok->str);
 		line += ret;
 	}
 	return (out);
@@ -118,7 +117,7 @@ char	*eval_tok(t_token *tok)
 		return (ft_substr(tok->str, 1, ft_strlen(tok->str) - 2));
 	else if (tok->type == VALUE)
 		return (ft_strdup(tok->str));
-	ft_printf_fd(2, "Error : ")
+	ft_printf_fd(2, "Error : ");
 	return (0);
 }
 
