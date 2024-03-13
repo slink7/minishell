@@ -1,6 +1,9 @@
 SRC = \
 	main.c\
-	tokenise.c
+	tokenise.c\
+	escape_quoted.c\
+	expand_variables.c\
+	strnesc.c
 
 OBJ_DIR = obj
 OBJ = $(addprefix $(OBJ_DIR)/, $(addsuffix .o, $(notdir $(basename $(SRC)))))

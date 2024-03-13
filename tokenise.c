@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/05 14:31:37 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/11 20:00:17 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/13 17:30:21 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,18 +34,10 @@ void	free_token(void	*token)
 
 enum e_token_type	get_token_type(char *str)
 {
-	if (*str == 0)
+	if (!str || *str == 0)
 		return (EMPTY);
-	if (*str == '\'')
-		return (SINGLE_QUOTE);
-	else if (*str == '\"')
-		return (DOUBLE_QUOTE);
 	else if (*str == '(')
 		return (PARENTHESIS);
-	else if (*str == '$')
-		return (RD_VARIABLE);
-	else if (*str == '|')
-		return (PIPE);
 	else if (!ft_strncmp(str, "<<", 2))
 		return (RD_H_REDIRECT);
 	else if (*str == '<')
@@ -54,8 +46,6 @@ enum e_token_type	get_token_type(char *str)
 		return (WR_A_REDIRECT);
 	else if (*str == '>')
 		return (WR_REDIRECT);
-	else if (ft_strchr(str, '='))
-		return (WR_VARIABLE);
 	return (VALUE);
 }
 
@@ -78,12 +68,8 @@ int	get_next_token(t_token **out, char *line)
 		index += 1 + (line[index + 1] == '<');
 	else if (line[index] == '>')
 		index += 1 + (line[index + 1] == '>');
-	else if (line[index] == '\"')
-		index += ft_strchri(line + index + 1, '\"') + 2;
-	else if (line[index] == '\'')
-		index += ft_strchri(line + index + 1, '\'') + 2;
 	else
-		while (line[index] && !ft_strchr(" \'\"<>", line[index]))
+		while (line[index] && !ft_strchr(" <>", line[index]))
 			index++;
 	temp = ft_substr(line, start, index - start);
 	*out = new_token(temp, get_token_type(temp));
@@ -109,18 +95,6 @@ t_list	*tokenise(char *line)
 	return (out);
 }
 
-char	*eval_tok(t_token *tok)
-{
-	if (tok->type == DOUBLE_QUOTE)
-		return (ft_substr(tok->str, 1, ft_strlen(tok->str) - 2));
-	else if (tok->type == SINGLE_QUOTE)
-		return (ft_substr(tok->str, 1, ft_strlen(tok->str) - 2));
-	else if (tok->type == VALUE)
-		return (ft_strdup(tok->str));
-	ft_printf_fd(2, "Error : ");
-	return (0);
-}
-
 t_token	*tok_refine(t_list **tok)
 {
 	t_token	*out;
@@ -128,7 +102,7 @@ t_token	*tok_refine(t_list **tok)
 
 	if (!*tok)
 		return (0);
-	t = (t_token*)(*tok)->content;
+	t = (*tok)->content;
 	if (t->type >= RD_REDIRECT && t->type <= WR_A_REDIRECT)
 	{
 		if (!(*tok)->next || ((t_token*)(*tok)->next->content)->type == EMPTY)
@@ -136,12 +110,12 @@ t_token	*tok_refine(t_list **tok)
 			ft_printf_fd(2, "Error: token \"%s\" needs following token\n", t->str);
 			return (0);
 		}
-		out = new_token(eval_tok((*tok)->next->content), t->type);
+		out = new_token(ft_strdup((*tok)->next->content), t->type);
 		*tok = (*tok)->next->next;
 	}
-	else if (t->type >= VALUE && t->type <= DOUBLE_QUOTE)
+	else if (t->type == VALUE)
 	{
-		out = new_token(eval_tok((*tok)->content), VALUE);
+		out = new_token(ft_strdup(t->str), VALUE);
 		*tok = (*tok)->next;
 	}
 	else

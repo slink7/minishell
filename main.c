@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 15:54:28 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/10 00:47:59 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/13 18:07:21 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 #include "libft.h"
 #include "tokenise.h"
 #include "t_command.h"
+#include "parsing.h"
 
 typedef struct s_env
 {
@@ -79,70 +80,50 @@ char	*get_next_word(char *str)
 	return (0);
 }
 
-#define FLAG_IN O_CREAT | O_RDONLY
-#define FLAG_OUT O_CREAT | O_WRONLY
-#define FLAG_OUT_APPEND O_CREAT | O_WRONLY | O_APPEND
-
-void	parse_cmd_in(char *str, t_command *cmd)
+void	unescape(char *str)
 {
-	char	*start;
-	char	*temp;
-
-	start = ft_strchr(str, '<');
-	while (start)
+	while (*str)
 	{
-		temp = get_next_word(start + 1);
-		cmd_setstream(&cmd->fd_in, temp, FLAG_IN, 0777);
-		start = ft_strchr(start + 1, '<');
+		if (*str < 0)
+			*str += 128;
+		str++;
 	}
 }
 
-void	parse_cmd_out(char *str, t_command *cmd)
+void	parse(char **line)
 {
-	static int	flags[] = {FLAG_OUT_APPEND, FLAG_OUT};
-	char		*start;
-	char		*temp;
-	int			append_mode;
+	int		k;
+	char	**commands;
+	t_list	*t;
+	t_list	*tok;
 
-	start = ft_strchr(str, '>');
-	while (start)
+	printf("%s\n", *line);
+	expand_variables(line, 0);
+	escape_quoted(*line);
+	commands = ft_split(*line, '|');
+	k = -1;
+	while (commands[++k])
 	{
-		append_mode = (start[1] == '>');
-		temp = get_next_word(start + 1 + append_mode);
-		cmd_setstream(&cmd->fd_in, temp, flags[append_mode], 0644);
-		start = ft_strchr(start + 1 + append_mode, '>');
+		tok = tokenise(commands[k]);
+		t = tok;
+		printf("\t");
+		while (t)
+		{
+			unescape(((t_token *)t->content)->str);
+			printf("[%s] ", ((t_token *)t->content)->str);
+			t = t->next;
+		}
+		printf("\n");
+		ft_lstclear(&tok, free_token);
 	}
+	printf("\n");
+	ft_strarrfree(commands);
 }
 
-void	get_command(t_command *out, char *str)
+int	interpret(char **line)
 {
-	t_list	*toks;
 
-	if (!out)
-		return ;
-	out->fd_in = 0;
-	out->fd_out = 1;
-	out->cmd = 0;
-	ft_printf_fd(1, "\nTokenising\n");
-	toks = tokenise(str);
-	ft_printf_fd(1, "\nCommand : \"%s\"\n\tRaw :\n", str);
-	print_token_list(toks);
-	t_list *e = toks_refine(toks);
-	ft_printf_fd(1, "\tRefined :\n");
-	print_token_list(e);
-}
-
-int	interpret(char *line)
-{
-	char		**raw_cmds;
-	int			len;
-	t_command	*cmds;
-
-	raw_cmds = ft_split(line, '|');
-	len = ft_strarrlen(raw_cmds);
-	cmds = ft_calloc(len, sizeof(t_command));
-	for (int k = 0; k < len; k++)
-		get_command(cmds + k, raw_cmds[k]);
+	parse(line);
 	return (1);
 }
 
@@ -175,7 +156,7 @@ int	main(void)
 			free(line);
 			break ;
 		}
-		interpret(line);
+		interpret(&line);
 		free(line);
 	}
 	deinit_env(&env);
