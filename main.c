@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 15:54:28 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/13 18:07:21 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/13 20:07:26 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,66 +58,34 @@ void	cmd_setstream(int *fd, char *file, int flags, int perms)
 	*fd = open(file, flags, perms);
 }
 
-int isws(char c)
+int	set_command(t_command *cmd, char *str)
 {
-	return (c == ' ' || c == '\t' || c == '\n' || c == '\0');
+	t_list	*toks;
+
+	toks = tokenise(str);
+	toks_refine(&toks);
+	print_token_list(toks);
+	(void) cmd;
+	return (1);
 }
 
-char	*get_next_word(char *str)
+t_command	*parse(char **line)
 {
-	int	k;
-	int	start;
+	int			k;
+	char		**commands;
+	t_command	*out;
 
-	start = 0;
-	k = 0;
-	while (str[k++])
-	{
-		if (!start && isws(str[k - 1]) && !isws(str[k]))
-			start = k;
-		else if (!isws(str[k - 1]) && isws(str[k]))
-			return (ft_substr(str, start, k - start));
-	}
-	return (0);
-}
-
-void	unescape(char *str)
-{
-	while (*str)
-	{
-		if (*str < 0)
-			*str += 128;
-		str++;
-	}
-}
-
-void	parse(char **line)
-{
-	int		k;
-	char	**commands;
-	t_list	*t;
-	t_list	*tok;
-
-	printf("%s\n", *line);
 	expand_variables(line, 0);
 	escape_quoted(*line);
 	commands = ft_split(*line, '|');
+	out = malloc(sizeof(t_command) * ft_strarrlen(commands));
 	k = -1;
 	while (commands[++k])
 	{
-		tok = tokenise(commands[k]);
-		t = tok;
-		printf("\t");
-		while (t)
-		{
-			unescape(((t_token *)t->content)->str);
-			printf("[%s] ", ((t_token *)t->content)->str);
-			t = t->next;
-		}
-		printf("\n");
-		ft_lstclear(&tok, free_token);
+		set_command(out + k, commands[k]);
 	}
-	printf("\n");
 	ft_strarrfree(commands);
+	return (out);
 }
 
 int	interpret(char **line)

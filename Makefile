@@ -1,39 +1,67 @@
-SRC = \
-	main.c\
-	tokenise.c\
-	escape_quoted.c\
-	expand_variables.c\
-	strnesc.c
+
+#===CONFIGURATION===
+NAME = minishell
+NAME_BONUS = bababooey
+
+SRC =\
+	src/main.c\
+	src/tokenise.c\
+	src/escape_quoted.c\
+	src/expand_variables.c\
+	src/strnesc.c
+
+SRC_BONUS =\
+	
+
+CFLAGS = -Wall -Werror -Wextra -g3
+LFLAGS = -lreadline
+
+LIBS = \
+	libft/libft.a\
+
+
+INCLUDES = -Ilibft/ -I./
 
 OBJ_DIR = obj
+
+#===AUTOMATIC VARS===
+
 OBJ = $(addprefix $(OBJ_DIR)/, $(addsuffix .o, $(notdir $(basename $(SRC)))))
+OBJ_BONUS = $(addprefix $(OBJ_DIR)/, $(addsuffix _bonus.o, $(notdir $(basename $(SRC_BONUS)))))
 
-NAME = minishell
+LIB_FLAGS = $(addprefix -L, $(dir $(LIBS))) $(addprefix -l, $(patsubst lib%.a, %, $(notdir $(LIBS))))
 
-CFLAGS = -Werror -Wall -Wextra
+#===TARGETS===
+all : $(NAME)
 
-all : libft/libft.a $(OBJ_DIR) $(NAME)
+bonus : $(NAME_BONUS)
 
-libft/ :
-	git clone git@github.com:slink7/libft.git
+#===COMPILING===
+$(OBJ_DIR) :
+	$(shell mkdir -p $(OBJ_DIR))
+$(OBJ_DIR)/%.o : src/%.c
+	cc $(CFLAGS) -o $@ -c $< $(INCLUDES)
+$(OBJ_DIR)/%_bonus.o : bonus/%.c
+	cc $(CFLAGS) -o $@ -c $< $(INCLUDES)
+%.a :
+	make -C $(dir $@)
 
-libft/libft.a : libft/
-#	git submodule update --init --remote
-	cd libft/ ; make
+#===LINKING===
+$(NAME_BONUS) : $(OBJ_DIR) $(LIBS) $(OBJ_BONUS)
+	cc -o $(NAME_BONUS) $(OBJ_BONUS) $(LIB_FLAGS) $(LFLAGS)
+$(NAME) : $(OBJ_DIR) $(LIBS) $(OBJ)
+	cc -o $(NAME) $(OBJ) $(LIB_FLAGS) $(LFLAGS)
 
+#===CLEAN===
 clean :
 	rm -rf $(OBJ_DIR) || true
 
+#===FCLEAN===
 fclean : clean
-	rm $(NAME) || true
+	rm -f $(NAME) $(NAME_BONUS) || true
 
+#===RE===
 re : fclean all
 
-$(NAME) : $(OBJ)
-	cc -o $(NAME) $(OBJ) -Llibft -lft -lreadline
 
-$(OBJ_DIR) :
-	mkdir $(OBJ_DIR)
-
-$(OBJ_DIR)/%.o : %.c
-	cc -g3 $(CFLAGS) -o $@ -c $< -Ilibft/
+.PHONY : re fclean clean all default bonus
