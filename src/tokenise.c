@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/05 14:31:37 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/13 17:30:21 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/13 19:53:20 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,8 @@ enum e_token_type	get_token_type(char *str)
 	return (VALUE);
 }
 
+#include "parsing.h"
+
 int	get_next_token(t_token **out, char *line)
 {
 	int		index;
@@ -72,6 +74,7 @@ int	get_next_token(t_token **out, char *line)
 		while (line[index] && !ft_strchr(" <>", line[index]))
 			index++;
 	temp = ft_substr(line, start, index - start);
+	unescape(temp);
 	*out = new_token(temp, get_token_type(temp));
 	return (index);
 }
@@ -95,6 +98,8 @@ t_list	*tokenise(char *line)
 	return (out);
 }
 
+#include <stdio.h>
+
 t_token	*tok_refine(t_list **tok)
 {
 	t_token	*out;
@@ -110,7 +115,7 @@ t_token	*tok_refine(t_list **tok)
 			ft_printf_fd(2, "Error: token \"%s\" needs following token\n", t->str);
 			return (0);
 		}
-		out = new_token(ft_strdup((*tok)->next->content), t->type);
+		out = new_token(ft_strdup(((t_token*)(*tok)->next->content)->str), t->type);
 		*tok = (*tok)->next->next;
 	}
 	else if (t->type == VALUE)
@@ -123,17 +128,20 @@ t_token	*tok_refine(t_list **tok)
 	return (out);
 }
 
-t_list	*toks_refine(t_list *toks)
+void	toks_refine(t_list **toks)
 {
 	t_list	*out;
+	t_list	*qoizjd;
 	t_token	*temp;
 
 	out = 0;
-	temp = tok_refine(&toks);
+	temp = tok_refine(toks);
+	qoizjd = *toks;
 	while (temp)
 	{
 		ft_lstadd_back(&out, ft_lstnew(temp));
-		temp = tok_refine(&toks);
+		temp = tok_refine(&qoizjd);
 	}
-	return (out);
+	ft_lstclear(toks, free_token);
+	*toks = out;
 }

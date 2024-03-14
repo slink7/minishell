@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 15:54:28 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/13 20:07:26 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/14 16:22:42 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,6 @@ int	init_env(t_env *env)
 	env->working_directory = getcwd(0, 0);
 	return (1);
 }
-
 int	deinit_env(t_env *env)
 {
 	free(env->working_directory);
@@ -58,14 +57,103 @@ void	cmd_setstream(int *fd, char *file, int flags, int perms)
 	*fd = open(file, flags, perms);
 }
 
+#define TYPE_IN1 1
+#define TYPE_OUT1 2
+#define TYPE_IN2 4
+#define TYPE_OUT2 8
+
+#define TYPE_IN 5
+#define TYPE_OUT 10
+#define TYPE_SIMPLE 3
+#define TYPE_DOUBLE 12
+
+int	next_redir(char *str, char **out)
+{
+	char	*temp;
+	int		type;
+
+	type = 0;
+	*out = ft_strchr(str, '<');
+	if (*out)
+		type = 1;
+	temp = ft_strchr(str, '>');
+	if (temp && (temp < *out || !*out))
+	{
+		*out = temp;
+		type = 2;
+	}
+	temp = ft_strnstr(str, "<<", ft_strlen(str));
+	if (temp && (temp <= *out || !*out))
+	{
+		*out = temp;
+		type = 3;
+	}
+	temp = ft_strnstr(str, ">>", ft_strlen(str));
+	if (temp && (temp <= *out || !*out))
+	{
+		*out = temp;
+		type = 4;
+	}
+	return (type);
+}
+
+int s(int c)
+{
+	return (c == ' ' || c == '\t' || c == '\n' || c == '\0');
+}
+
+char	*get_next_word(char *str, int (*sep)(int))
+{
+	int	k;
+	int	start;
+
+	start = 0;
+	k = -1;
+	while (str[++k])
+	{
+		if (!start && sep(str[k - 1]) && !sep(str[k]))
+			start = k;
+		else if (!sep(str[k - 1]) && sep(str[k]))
+			return (ft_substr(str, start, k - start));
+	}
+	return (0);
+}
+
+void	goto_falling_edge(char **str, int (*sep)(int))
+{
+	char	*s;
+	int		k;
+
+	s = *str;
+	k = -1;
+	while (s[++k])
+		if (!sep(s[k]) && sep(s[k + 1]))
+			break ;
+	*str = s + k;
+}
+
 int	set_command(t_command *cmd, char *str)
 {
-	t_list	*toks;
+	char	*nr;
+	char	*file;
+	char	*cpy;
+	int		type;
 
-	toks = tokenise(str);
-	toks_refine(&toks);
-	print_token_list(toks);
-	(void) cmd;
+	type = next_redir(str, &nr);
+	while (type)
+	{
+		file = get_next_word(nr + 1 + !!(type & TYPE_DOUBLE), s);
+		if (type & TYPE_IN)
+			cmd_setstream(&cmd->fd_in, file, O_RDONLY, 0777);
+		else if (type & TYPE_OUT)
+			cmd_setstream(&cmd->fd_out, file, O_WRONLY, 0644);
+		cpy = nr + 1 + !!(type & TYPE_DOUBLE);
+		goto_falling_edge(&cpy, s);
+		ft_strlcpy(nr, cpy + 1, cpy - nr);
+		free(file);
+		type = next_redir(nr, &nr);
+	}
+	cmd->cmd = ft_splitf(str, s);
 	return (1);
 }
 
@@ -78,11 +166,16 @@ t_command	*parse(char **line)
 	expand_variables(line, 0);
 	escape_quoted(*line);
 	commands = ft_split(*line, '|');
-	out = malloc(sizeof(t_command) * ft_strarrlen(commands));
+	out = ft_calloc(ft_strarrlen(commands) + 1, sizeof(t_command));
 	k = -1;
 	while (commands[++k])
 	{
+		out[k].fd_in = 0;
+		out[k].fd_out = 1;
 		set_command(out + k, commands[k]);
+		for (int l = 0; out[k].cmd[l]; l++)
+			printf("[%s] ", out[k].cmd[l]);
+		printf("\n");
 	}
 	ft_strarrfree(commands);
 	return (out);
@@ -90,8 +183,14 @@ t_command	*parse(char **line)
 
 int	interpret(char **line)
 {
+	t_command	*cmds;
+	int			k;
 
-	parse(line);
+	cmds = parse(line);
+	k = -1;
+	while (cmds[++k].cmd)
+		ft_strarrfree(cmds[k].cmd);
+	free(cmds);
 	return (1);
 }
 
