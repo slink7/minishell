@@ -1,1 +1,3 @@
 # Not interpret unclosed quotes 
+# Unescape escaped chars
+# Check for null file passed to cmd_setstream (main.c:57)
