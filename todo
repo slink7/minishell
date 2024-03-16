@@ -1,7 +1,6 @@
 # Not interpret unclosed quotes 
 # Unescape escaped chars
 # Check for null file passed to cmd_setstream (main.c:57)
-# fix bug : exits after 1 line executed
 # fix forks :
     execve does not return on success
 	it has to have its own fork and close

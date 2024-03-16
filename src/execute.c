@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 17:08:05 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/16 16:56:06 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/16 17:45:12 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,15 +55,29 @@ int	cmd_exec(char **arr_cmd, char **envp)
 	return (execve(cmd, arr_cmd, envp));
 }
 
+#include <sys/wait.h>
+
 int    execute_command(t_command *cmd, char **envp)
 {
     int		out;
+	int	pid;
 
-	dup2(cmd->fd_out, 1);
-	dup2(cmd->fd_in, 0);
-    out = cmd_exec(cmd->cmd, envp);
-    close(cmd->fd_in);
-    close(cmd->fd_out);
+	pid = fork();
+	if (pid == -1)
+		perror("Zeubii");
+	if (pid == 0)
+	{
+		dup2(cmd->fd_out, 1);
+		dup2(cmd->fd_in, 0);
+		out = cmd_exec(cmd->cmd, envp);
+		if (cmd->fd_in != 0)
+			close(cmd->fd_in);
+		if (cmd->fd_out != 1)
+			close(cmd->fd_out);
+	}
+	// else
+	// 	waitpid(pid, 0, 0);
+	
     return (out);
 }
 
@@ -97,6 +111,5 @@ void    pipe_exe(int cmdc, t_command *cmds, char **envp)
             execute_command(&cmds[1], envp);
         else
             pipe_exe(cmdc - 1, cmds + 1, envp);
-			wait(0);
     }
 }
