@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 15:54:28 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/16 17:45:57 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/16 19:44:55 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@
 //#include <stdio.h>
 
 #include "libft.h"
-#include "tokenise.h"
 #include "t_command.h"
 #include "parsing.h"
 
@@ -38,14 +37,6 @@ int	deinit_env(t_env *env)
 {
 	free(env->working_directory);
 	return (1);
-}
-
-void	print_token_list(t_list *tokens)
-{
-	if (!tokens)
-		return ;
-	ft_printf_fd(1, "(%X)[%s]\n", ((t_token *)tokens->content)->type, ((t_token *)tokens->content)->str);
-	print_token_list(tokens->next);
 }
 
 void	cmd_setstream(int *fd, char *file, int flags, int perms)

@@ -5,7 +5,6 @@ NAME_BONUS = bababooey
 
 SRC =\
 	src/main.c\
-	src/tokenise.c\
 	src/escape_quoted.c\
 	src/expand_variables.c\
 	src/strnesc.c\
