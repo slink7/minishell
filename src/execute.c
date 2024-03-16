@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 17:08:05 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/16 18:16:44 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/16 20:25:35 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ int    execute_command(t_command *cmd, char **envp)
 
 	pid = fork();
 	if (pid == -1)
-		perror("Zeubii");
+		perror("minishell: fork");
 	if (pid == 0)
 	{
 		dup2(cmd->fd_out, 1);
@@ -91,10 +91,10 @@ void    pipe_exe(int cmdc, t_command *cmds, char **envp)
     if (cmdc < 2 && (execute_command(cmds, envp) || 1))
         return ;
     if (pipe(fd_pipe) == -1)
-        perror("pipex: pipe");
+        perror("minishell: pipe");
     pid = fork();
     if (pid == -1)
-        perror("pipex: fork");
+        perror("minishell: fork");
     else if (pid == 0)
     {
         if (cmds[0].fd_out == 1)
