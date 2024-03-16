@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 17:08:05 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/16 17:45:12 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/16 18:16:44 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,8 +75,8 @@ int    execute_command(t_command *cmd, char **envp)
 		if (cmd->fd_out != 1)
 			close(cmd->fd_out);
 	}
-	// else
-	// 	waitpid(pid, 0, 0);
+	else
+		waitpid(pid, 0, 0);
 	
     return (out);
 }
