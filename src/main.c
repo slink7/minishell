@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 15:54:28 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/14 16:22:42 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/16 16:56:36 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,15 +173,17 @@ t_command	*parse(char **line)
 		out[k].fd_in = 0;
 		out[k].fd_out = 1;
 		set_command(out + k, commands[k]);
-		for (int l = 0; out[k].cmd[l]; l++)
-			printf("[%s] ", out[k].cmd[l]);
-		printf("\n");
+		// for (int l = 0; out[k].cmd[l]; l++)
+		// 	printf("[%s] ", out[k].cmd[l]);
+		// printf("\n");
 	}
 	ft_strarrfree(commands);
 	return (out);
 }
 
-int	interpret(char **line)
+void    pipe_exe(int cmdc, t_command *cmds, char **envp);
+
+int	interpret(char **line, char **envp)
 {
 	t_command	*cmds;
 	int			k;
@@ -189,7 +191,8 @@ int	interpret(char **line)
 	cmds = parse(line);
 	k = -1;
 	while (cmds[++k].cmd)
-		ft_strarrfree(cmds[k].cmd);
+		;
+	pipe_exe(k, cmds, envp);
 	free(cmds);
 	return (1);
 }
@@ -205,11 +208,13 @@ void	sig_handler(int signum)
 	}
 }
 
-int	main(void)
+int	main(int argc, char **argv, char **envp)
 {
 	t_env	env;
 	char	*line;
 
+	(void) argc;
+	(void) argv;
 	signal(SIGINT, sig_handler);
 	signal(SIGQUIT, sig_handler);
 	init_env(&env);
@@ -223,7 +228,7 @@ int	main(void)
 			free(line);
 			break ;
 		}
-		interpret(&line);
+		interpret(&line, envp);
 		free(line);
 	}
 	deinit_env(&env);
