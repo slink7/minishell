@@ -55,6 +55,8 @@ void	cmd_setstream(int *fd, char *file, int flags, int perms)
 	if (*fd != 0 && *fd != 1 && *fd != 2)
 		close(*fd);
 	*fd = open(file, flags, perms);
+	if (*fd == -1)
+		perror("minishell: open");
 }
 
 #define TYPE_IN1 1
@@ -111,10 +113,10 @@ char	*get_next_word(char *str, int (*sep)(int))
 	k = -1;
 	while (str[++k])
 	{
-		if (!start && sep(str[k - 1]) && !sep(str[k]))
-			start = k;
-		else if (!sep(str[k - 1]) && sep(str[k]))
-			return (ft_substr(str, start, k - start));
+		if (!start && sep(str[k]) && !sep(str[k + 1]))
+			start = k + 1;
+		else if (!sep(str[k]) && sep(str[k + 1]))
+			return (ft_substr(str, start, k + 1 - start));
 	}
 	return (0);
 }
