@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 17:08:05 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/16 20:25:35 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/17 02:00:22 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,57 +59,82 @@ int	cmd_exec(char **arr_cmd, char **envp)
 
 int    execute_command(t_command *cmd, char **envp)
 {
-    int		out;
-	int	pid;
+    int	out;
 
-	pid = fork();
-	if (pid == -1)
-		perror("minishell: fork");
-	if (pid == 0)
-	{
-		dup2(cmd->fd_out, 1);
-		dup2(cmd->fd_in, 0);
-		out = cmd_exec(cmd->cmd, envp);
-		if (cmd->fd_in != 0)
-			close(cmd->fd_in);
-		if (cmd->fd_out != 1)
-			close(cmd->fd_out);
-	}
-	else
-		waitpid(pid, 0, 0);
-	
+	dup2(cmd->fd_out, 1);
+	dup2(cmd->fd_in, 0);
+	out = cmd_exec(cmd->cmd, envp);
+	close(cmd->fd_in);
+	close(cmd->fd_out);
     return (out);
 }
 
-#include <sys/wait.h>
-
-void    pipe_exe(int cmdc, t_command *cmds, char **envp)
+static void    exe_pipe_rec(int cmdc, t_command *cmds, char **envp)
 {
-    int    pid;
-    int    fd_pipe[2];
+    int	pid;
+    int	fd_pipe[2];
+	int	status;
 
-    if (cmdc < 2 && (execute_command(cmds, envp) || 1))
+    if (cmdc < 1 || !cmds)
         return ;
-    if (pipe(fd_pipe) == -1)
-        perror("minishell: pipe");
-    pid = fork();
-    if (pid == -1)
-        perror("minishell: fork");
-    else if (pid == 0)
-    {
-        if (cmds[0].fd_out == 1)
-		    cmds[0].fd_out = fd_pipe[1];
-        close(fd_pipe[0]);
-        execute_command(&cmds[0], envp);
-    }
-    else
-    {
-		if (cmds[1].fd_in == 0)
-            cmds[1].fd_in = fd_pipe[0];
-        close(fd_pipe[1]);
-        if (cmdc == 2)
-            execute_command(&cmds[1], envp);
-        else
-            pipe_exe(cmdc - 1, cmds + 1, envp);
-    }
+	if (cmdc == 1)
+	{
+		execute_command(cmds, envp);
+		return ;
+	}
+	status = 0;
+	if (pipe(fd_pipe))
+	{
+		perror("minishell: pipe");
+		return ;
+	}
+
+	if (cmds[0].fd_out == 1)
+		cmds[0].fd_out = fd_pipe[1];
+	if (cmds[1].fd_in == 0)
+		cmds[1].fd_in = fd_pipe[0];
+	
+	pid = fork();
+	if (pid == -1)
+	{
+		perror("minishell: fork");
+		return ;
+	}
+	else if (pid == 0)
+	{
+		close(fd_pipe[0]);
+		execute_command(cmds, envp);
+		perror("minishell: execve");
+		exit(1);
+	}
+	else
+	{
+		waitpid(pid, &status, 0);
+		if (status)
+			printf("Status:%d\n", status);
+		close(fd_pipe[1]);
+		exe_pipe_rec(cmdc - 1, cmds + 1, envp);
+	}
+}
+
+int	execute_piped_commands(int cmdc, t_command *cmds, char **envp)
+{
+	int	pid;
+	int	out;
+
+	out = 0;
+	pid = fork();
+	if (pid == -1)
+	{
+		perror("minishell: fork");
+		return (0);
+	}
+	else if (pid == 0)
+		exe_pipe_rec(cmdc, cmds, envp);
+	else if (waitpid(pid, &out, 0) != pid)
+	{
+		perror("minishell: waitpid");
+		return (0);
+	}
+	return (out);
 }
