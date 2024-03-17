@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 17:08:05 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/17 02:00:22 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/17 17:51:30 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,14 +69,14 @@ int    execute_command(t_command *cmd, char **envp)
     return (out);
 }
 
-static void    exe_pipe_rec(int cmdc, t_command *cmds, char **envp)
+static int    exe_pipe_rec(int cmdc, t_command *cmds, char **envp)
 {
     int	pid;
     int	fd_pipe[2];
 	int	status;
 
     if (cmdc < 1 || !cmds)
-        return ;
+		return ;
 	if (cmdc == 1)
 	{
 		execute_command(cmds, envp);
@@ -103,9 +103,9 @@ static void    exe_pipe_rec(int cmdc, t_command *cmds, char **envp)
 	else if (pid == 0)
 	{
 		close(fd_pipe[0]);
-		execute_command(cmds, envp);
+		status = execute_command(cmds, envp);
 		perror("minishell: execve");
-		exit(1);
+		exit(status);
 	}
 	else
 	{
@@ -115,6 +115,7 @@ static void    exe_pipe_rec(int cmdc, t_command *cmds, char **envp)
 		close(fd_pipe[1]);
 		exe_pipe_rec(cmdc - 1, cmds + 1, envp);
 	}
+	return (status);
 }
 
 int	execute_piped_commands(int cmdc, t_command *cmds, char **envp)
@@ -130,7 +131,10 @@ int	execute_piped_commands(int cmdc, t_command *cmds, char **envp)
 		return (0);
 	}
 	else if (pid == 0)
+	{
 		exe_pipe_rec(cmdc, cmds, envp);
+		exit(0);
+	}
 	else if (waitpid(pid, &out, 0) != pid)
 	{
 		perror("minishell: waitpid");
