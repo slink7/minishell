@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 15:54:28 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/17 02:01:05 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/17 19:47:27 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,6 +191,9 @@ int	interpret(char **line, char **envp)
 	while (cmds[++k].cmd)
 		;
 	execute_piped_commands(k, cmds, envp);
+	// k = -1;
+	// while (cmds[++k].cmd)
+	// 	ft_strarrfree(cmds[k].cmd);
 	free(cmds);
 	return (1);
 }
@@ -218,7 +221,9 @@ int	main(int argc, char **argv, char **envp)
 	init_env(&env);
 	while (1)
 	{
-		line = readline("\033[22;34mminishell>\033[0m");
+		char b[1000];
+		sprintf(b, "\e[22;34mminishell(%d)>\e[0m", getpid());
+		line = readline(b);
 		if (line && *line)
 			add_history(line);
 		if (!line || !ft_strncmp(line, "exit", 5))
