@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 17:08:05 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/17 17:51:30 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/17 19:51:21 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,17 +76,14 @@ static int    exe_pipe_rec(int cmdc, t_command *cmds, char **envp)
 	int	status;
 
     if (cmdc < 1 || !cmds)
-		return ;
+		return (0);
 	if (cmdc == 1)
-	{
-		execute_command(cmds, envp);
-		return ;
-	}
+		return (execute_command(cmds, envp));
 	status = 0;
 	if (pipe(fd_pipe))
 	{
 		perror("minishell: pipe");
-		return ;
+		return (1);
 	}
 
 	if (cmds[0].fd_out == 1)
@@ -98,7 +95,7 @@ static int    exe_pipe_rec(int cmdc, t_command *cmds, char **envp)
 	if (pid == -1)
 	{
 		perror("minishell: fork");
-		return ;
+		return (1);
 	}
 	else if (pid == 0)
 	{
@@ -109,9 +106,9 @@ static int    exe_pipe_rec(int cmdc, t_command *cmds, char **envp)
 	}
 	else
 	{
-		waitpid(pid, &status, 0);
-		if (status)
-			printf("Status:%d\n", status);
+		//waitpid(pid, &status, 0);
+		// if (status)
+		// 	printf("Status:%d\n", status);
 		close(fd_pipe[1]);
 		exe_pipe_rec(cmdc - 1, cmds + 1, envp);
 	}
