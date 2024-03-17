@@ -1,5 +1,5 @@
 # Not interpret unclosed quotes 
-# Unescape escaped chars
+# Add different file redictions
 # Check for null file passed to cmd_setstream (main.c:57)
 # fix forks :
     execve does not return on success
