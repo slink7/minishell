@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 15:54:28 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/17 19:47:27 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/18 17:25:32 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,9 +191,9 @@ int	interpret(char **line, char **envp)
 	while (cmds[++k].cmd)
 		;
 	execute_piped_commands(k, cmds, envp);
-	// k = -1;
-	// while (cmds[++k].cmd)
-	// 	ft_strarrfree(cmds[k].cmd);
+	k = -1;
+	while (cmds[++k].cmd)
+		ft_strarrfree(cmds[k].cmd);
 	free(cmds);
 	return (1);
 }
