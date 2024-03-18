@@ -1,4 +1,3 @@
-# Not interpret unclosed quotes 
 # Add different file redictions
 # Check for null file passed to cmd_setstream (main.c:57)
 # fix forks :
