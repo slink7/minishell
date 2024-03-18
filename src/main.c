@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 15:54:28 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/18 17:25:32 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/18 17:45:54 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,6 +136,11 @@ int	set_command(t_command *cmd, char *str)
 	while (type)
 	{
 		file = get_next_word(nr + 1 + !!(type & TYPE_DOUBLE), s);
+		if (!file)
+		{
+			ft_printf_fd(2, "Error : wrong file name");
+			return (0);
+		}
 		unescape(file);
 		if (type & TYPE_IN)
 			cmd_setstream(&cmd->fd_in, file, O_RDONLY, 0777);
@@ -171,9 +176,6 @@ t_command	*parse(char **line)
 		out[k].fd_in = 0;
 		out[k].fd_out = 1;
 		set_command(out + k, commands[k]);
-		// for (int l = 0; out[k].cmd[l]; l++)
-		// 	printf("[%s] ", out[k].cmd[l]);
-		// printf("\n");
 	}
 	ft_strarrfree(commands);
 	return (out);

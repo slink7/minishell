@@ -7,7 +7,7 @@ SRC =\
 	src/main.c\
 	src/escape_quoted.c\
 	src/expand_variables.c\
-	src/strnesc.c\
+	src/strmod.c\
 	src/execute.c
 
 SRC_BONUS =\

@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/13 17:37:27 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/13 18:02:33 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/18 17:41:01 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,16 +18,6 @@
 static int	w(int c)
 {
 	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_';
-}
-
-static void	strend(char *str)
-{
-	static char	c = 0;
-	char		temp;
-
-	temp = c;
-	c = *str;
-	*str = temp;
 }
 
 static int		strcount(char *str, char c, int len)
