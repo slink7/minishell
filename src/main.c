@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 15:54:28 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/18 17:45:54 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/18 18:19:08 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ int	deinit_env(t_env *env)
 
 void	cmd_setstream(int *fd, char *file, int flags, int perms)
 {
-	if (!fd)
+	if (!fd || !file)
 		return ;
 	if (*fd != 0 && *fd != 1 && *fd != 2)
 		close(*fd);

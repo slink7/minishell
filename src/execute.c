@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 17:08:05 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/18 17:35:06 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/18 18:15:52 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,10 +124,7 @@ int	execute_piped_commands(int cmdc, t_command *cmds, char **envp)
 		return (0);
 	}
 	else if (pid == 0)
-	{
-		exe_pipe_rec(cmdc, cmds, envp);
-		exit(0);
-	}
+		exit(exe_pipe_rec(cmdc, cmds, envp));
 	else if (waitpid(pid, &out, 0) != pid)
 	{
 		perror("minishell: waitpid");
