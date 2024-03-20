@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ymostows <ymostows@student.42.fr>          +#+  +:+       +#+        */
+/*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 15:54:28 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/20 21:05:54 by ymostows         ###   ########.fr       */
+/*   Updated: 2024/03/20 23:46:48 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,37 +20,9 @@
 //#include <stdio.h>
 
 #include "libft.h"
-#include "libft/bst.h"
 #include "t_command.h"
 #include "parsing.h"
-
-typedef struct s_env
-{
-	t_bst	*envp;
-	t_bst	*vars;
-}	t_env;
-
-int	init_env(t_env *env, char **envp)
-{
-	int i;
-	
-	env->envp = 0;
-	env->vars = 0;
-	i = 0;
-	while (envp[i])
-	{
-		*ft_strchr(envp[i], '=') = '\0';
-		ft_bst_setvar(&env->envp, envp[i], envp[i] + ft_strlen(envp[i]) + 1);
-		i++;
-	}
-	return (1);
-}
-int	deinit_env(t_env *env)
-{
-	ft_bst_free(&env->envp);
-	ft_bst_free(&env->vars);
-	return (1);
-}
+#include "env.h"
 
 void	cmd_setstream_fd(int *fd, int new_fd)
 {

@@ -10,9 +10,11 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include <unistd.h>
+#include <stdio.h>
 
-typedef	struct s_env t_env;
+#include "libft.h"
+#include "env.h"
 
 int	builtin_cd(int argc, char **argv, t_env *env)
 {
