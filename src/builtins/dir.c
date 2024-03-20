@@ -12,26 +12,27 @@
 
 #include "libft.h"
 
-int	ft_cd(int argc, char **argv, t_env *env)
+typedef	struct s_env t_env;
+
+int	builtin_cd(int argc, char **argv, t_env *env)
 {
 	if (chdir(argv[0]) != 0)
 	{
-		perror("chdir");
+		perror("minishell: chdir");
 		return (1);
     }
 	return (0);
 }
 
-int	ft_pwd(int argc, char **argv, t_env *env)
+int	builtin_pwd(int argc, char **argv, t_env *env)
 {
 	char cwd[1024];
 
     if (getcwd(cwd, sizeof(cwd)) != NULL) {
         printf("%s\n", cwd);
     } else {
-        perror("getcwd");
+        perror("minishell: getcwd");
         return (1);
     }
 	return (0);
 }
-
