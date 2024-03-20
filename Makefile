@@ -8,6 +8,7 @@ SRC =\
 	src/escape_quoted.c\
 	src/expand_variables.c\
 	src/strmod.c\
+	src/here_doc.c\
 	src/execute.c
 
 SRC_BONUS =\
