@@ -1,7 +1,7 @@
-# Not interpret unclosed quotes 
 # Add different file redictions
 # Check for null file passed to cmd_setstream (main.c:57)
 # fix forks :
     execve does not return on success
-	it has to have its own fork and close
+	so fds are maybe not properly closed
+# abort cmd if invalid file redirection ?
 # Add variable setting & concatting

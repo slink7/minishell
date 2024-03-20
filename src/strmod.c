@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   strnesc.c                                          :+:      :+:    :+:   */
+/*   strmod.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/13 17:50:35 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/13 19:00:27 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/18 17:28:57 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,4 +31,14 @@ void	strnesc(char *str, int len)
 			str[len] -= (str[len] >= 0) * 128;
 	else
 		strnesc(str, ft_strlen(str));
+}
+
+void	strend(char *str)
+{
+	static char	c = 0;
+	char		temp;
+
+	temp = c;
+	c = *str;
+	*str = temp;
 }

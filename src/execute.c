@@ -6,13 +6,14 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 17:08:05 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/17 19:51:21 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/18 18:15:52 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <sys/wait.h>
 
 #include "libft.h"
 #include "t_command.h"
@@ -42,7 +43,7 @@ static char	*get_cmd(char **paths, char *cmd)
 	return (0);
 }
 
-int	cmd_exec(char **arr_cmd, char **envp)
+static int	cmd_exec(char **arr_cmd, char **envp)
 {
 	char	**paths;
 	char	*cmd;
@@ -54,8 +55,6 @@ int	cmd_exec(char **arr_cmd, char **envp)
 	ft_strarrfree(paths);
 	return (execve(cmd, arr_cmd, envp));
 }
-
-#include <sys/wait.h>
 
 int    execute_command(t_command *cmd, char **envp)
 {
@@ -106,9 +105,6 @@ static int    exe_pipe_rec(int cmdc, t_command *cmds, char **envp)
 	}
 	else
 	{
-		//waitpid(pid, &status, 0);
-		// if (status)
-		// 	printf("Status:%d\n", status);
 		close(fd_pipe[1]);
 		exe_pipe_rec(cmdc - 1, cmds + 1, envp);
 	}
@@ -128,10 +124,7 @@ int	execute_piped_commands(int cmdc, t_command *cmds, char **envp)
 		return (0);
 	}
 	else if (pid == 0)
-	{
-		exe_pipe_rec(cmdc, cmds, envp);
-		exit(0);
-	}
+		exit(exe_pipe_rec(cmdc, cmds, envp));
 	else if (waitpid(pid, &out, 0) != pid)
 	{
 		perror("minishell: waitpid");

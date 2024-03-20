@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 15:54:28 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/17 19:47:27 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/18 18:19:08 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ int	deinit_env(t_env *env)
 
 void	cmd_setstream(int *fd, char *file, int flags, int perms)
 {
-	if (!fd)
+	if (!fd || !file)
 		return ;
 	if (*fd != 0 && *fd != 1 && *fd != 2)
 		close(*fd);
@@ -136,6 +136,11 @@ int	set_command(t_command *cmd, char *str)
 	while (type)
 	{
 		file = get_next_word(nr + 1 + !!(type & TYPE_DOUBLE), s);
+		if (!file)
+		{
+			ft_printf_fd(2, "Error : wrong file name");
+			return (0);
+		}
 		unescape(file);
 		if (type & TYPE_IN)
 			cmd_setstream(&cmd->fd_in, file, O_RDONLY, 0777);
@@ -171,9 +176,6 @@ t_command	*parse(char **line)
 		out[k].fd_in = 0;
 		out[k].fd_out = 1;
 		set_command(out + k, commands[k]);
-		// for (int l = 0; out[k].cmd[l]; l++)
-		// 	printf("[%s] ", out[k].cmd[l]);
-		// printf("\n");
 	}
 	ft_strarrfree(commands);
 	return (out);
@@ -191,9 +193,9 @@ int	interpret(char **line, char **envp)
 	while (cmds[++k].cmd)
 		;
 	execute_piped_commands(k, cmds, envp);
-	// k = -1;
-	// while (cmds[++k].cmd)
-	// 	ft_strarrfree(cmds[k].cmd);
+	k = -1;
+	while (cmds[++k].cmd)
+		ft_strarrfree(cmds[k].cmd);
 	free(cmds);
 	return (1);
 }
