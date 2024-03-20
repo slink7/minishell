@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ymostows <ymostows@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 15:54:28 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/18 18:19:08 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/20 21:05:54 by ymostows         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,34 +20,61 @@
 //#include <stdio.h>
 
 #include "libft.h"
+#include "libft/bst.h"
 #include "t_command.h"
 #include "parsing.h"
 
 typedef struct s_env
 {
-	char	*working_directory;
+	t_bst	*envp;
+	t_bst	*vars;
 }	t_env;
 
-int	init_env(t_env *env)
+int	init_env(t_env *env, char **envp)
 {
-	env->working_directory = getcwd(0, 0);
+	int i;
+	
+	env->envp = 0;
+	env->vars = 0;
+	i = 0;
+	while (envp[i])
+	{
+		*ft_strchr(envp[i], '=') = '\0';
+		ft_bst_setvar(&env->envp, envp[i], envp[i] + ft_strlen(envp[i]) + 1);
+		i++;
+	}
 	return (1);
 }
 int	deinit_env(t_env *env)
 {
-	free(env->working_directory);
+	ft_bst_free(&env->envp);
+	ft_bst_free(&env->vars);
 	return (1);
+}
+
+void	cmd_setstream_fd(int *fd, int new_fd)
+{
+	printf("%d\n", new_fd);
+	if (!fd)
+		return ;
+	if (*fd != 0 && *fd != 1 && *fd != 2)
+		close(*fd);
+	*fd = new_fd;
 }
 
 void	cmd_setstream(int *fd, char *file, int flags, int perms)
 {
-	if (!fd || !file)
+	int	new_fd;
+
+	if (!file)
 		return ;
-	if (*fd != 0 && *fd != 1 && *fd != 2)
-		close(*fd);
-	*fd = open(file, flags, perms);
-	if (*fd == -1)
-		perror("minishell: open");
+	new_fd = open(file, flags, perms);
+	if (new_fd == -1)
+	{
+		perror("minishell : open");
+		return ;
+	}
+	cmd_setstream_fd(fd, new_fd);
 }
 
 #define TYPE_IN1 1
@@ -68,24 +95,24 @@ int	next_redir(char *str, char **out)
 	type = 0;
 	*out = ft_strchr(str, '<');
 	if (*out)
-		type = 1;
+		type = TYPE_IN1;
 	temp = ft_strchr(str, '>');
 	if (temp && (temp < *out || !*out))
 	{
 		*out = temp;
-		type = 2;
+		type = TYPE_OUT1;
 	}
 	temp = ft_strnstr(str, "<<", ft_strlen(str));
 	if (temp && (temp <= *out || !*out))
 	{
 		*out = temp;
-		type = 3;
+		type = TYPE_IN2;
 	}
 	temp = ft_strnstr(str, ">>", ft_strlen(str));
 	if (temp && (temp <= *out || !*out))
 	{
 		*out = temp;
-		type = 4;
+		type = TYPE_OUT2;
 	}
 	return (type);
 }
@@ -143,9 +170,19 @@ int	set_command(t_command *cmd, char *str)
 		}
 		unescape(file);
 		if (type & TYPE_IN)
-			cmd_setstream(&cmd->fd_in, file, O_RDONLY, 0777);
+		{
+			if (type & TYPE_DOUBLE)
+				cmd_setstream_fd(&cmd->fd_in, here_doc(file));
+			else
+				cmd_setstream(&cmd->fd_in, file, O_RDONLY, 0777);
+		}
 		else if (type & TYPE_OUT)
-			cmd_setstream(&cmd->fd_out, file, O_WRONLY, 0644);
+		{
+			if (type & TYPE_DOUBLE)
+				cmd_setstream(&cmd->fd_out, file, O_WRONLY | O_APPEND | O_CREAT, 0644);
+			else
+				cmd_setstream(&cmd->fd_out, file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		}
 		cpy = nr + 1 + !!(type & TYPE_DOUBLE);
 		goto_falling_edge(&cpy, s);
 		ft_strlcpy(nr, cpy + 1, cpy - nr);
@@ -210,17 +247,33 @@ void	sig_handler(int signum)
 		rl_redisplay();
 	}
 }
+void	export(int	argc, char **argv, t_env *env)
+{
+	if (!argc)
+	{
+		ft_bst_print(env->envp);
+		return ;
+	}
+	ft_bst_setvar(&env->envp, argv[0], argv[1]);
+}
+
+
 
 int	main(int argc, char **argv, char **envp)
 {
-	t_env	env;
-	char	*line;
-
 	(void) argc;
 	(void) argv;
+	t_env	env;
+	char	*line;
+	
 	signal(SIGINT, sig_handler);
 	signal(SIGQUIT, sig_handler);
-	init_env(&env);
+	init_env(&env, envp);
+	//ft_bst_print(env.envp);
+
+
+
+	//ft_bst_print(env.envp);
 	while (1)
 	{
 		char b[1000];
