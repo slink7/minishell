@@ -9,7 +9,11 @@ SRC =\
 	src/expand_variables.c\
 	src/strmod.c\
 	src/here_doc.c\
-	src/execute.c
+	src/execute.c\
+	src/env.c\
+	src/builtins/dir.c\
+	src/builtins/exit.c\
+	src/builtins/fetch_builtin.c\
 
 SRC_BONUS =\
 	
@@ -27,7 +31,7 @@ OBJ_DIR = obj
 
 #===AUTOMATIC VARS===
 
-OBJ = $(addprefix $(OBJ_DIR)/, $(addsuffix .o, $(notdir $(basename $(SRC)))))
+OBJ = $(addprefix $(OBJ_DIR)/, $(addsuffix .o, $(basename $(SRC))))
 OBJ_BONUS = $(addprefix $(OBJ_DIR)/, $(addsuffix _bonus.o, $(notdir $(basename $(SRC_BONUS)))))
 
 LIB_FLAGS = $(addprefix -L, $(dir $(LIBS))) $(addprefix -l, $(patsubst lib%.a, %, $(notdir $(LIBS))))
@@ -40,9 +44,11 @@ bonus : $(NAME_BONUS)
 #===COMPILING===
 $(OBJ_DIR) :
 	$(shell mkdir -p $(OBJ_DIR))
-$(OBJ_DIR)/%.o : src/%.c
+$(OBJ_DIR)/%.o : %.c
+	mkdir -p $(dir $@)
 	cc $(CFLAGS) -o $@ -c $< $(INCLUDES)
 $(OBJ_DIR)/%_bonus.o : bonus/%.c
+	mkdir -p $(dir $@)
 	cc $(CFLAGS) -o $@ -c $< $(INCLUDES)
 %.a :
 	make -C $(dir $@)
