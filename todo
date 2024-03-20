@@ -4,3 +4,4 @@
 # fix forks :
     execve does not return on success
 	it has to have its own fork and close
+# Add variable setting & concatting
