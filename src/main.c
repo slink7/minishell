@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 15:54:28 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/21 08:32:02 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/21 17:43:30 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -237,15 +237,19 @@ int	main(int argc, char **argv, char **envp)
 	(void) argv;
 	t_env	env;
 	char	*line;
-	
-	// signal(SIGINT, sig_handler);
-	// signal(SIGQUIT, sig_handler);
+
+	signal(SIGINT, sig_handler);
+	signal(SIGQUIT, sig_handler);
 	init_env(&env, envp);
 	while (env.last_status != -1)
 	{
-		line = readline("\e[22;34mminishell>\e[0m");
+		char b[1024];
+		sprintf(b, "\e[22;34mminishell(%d)>\e[0m", getpid());
+		line = readline(b);
 		if (line && *line)
 			add_history(line);
+		if (!line || ft_strncmp(line, "exit", 5) == 0)
+			break ;
 		interpret(&line, &env);
 		free(line);
 	}
