@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 15:54:28 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/20 23:46:48 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/21 01:31:51 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,9 +190,9 @@ t_command	*parse(char **line)
 	return (out);
 }
 
-int	execute_piped_commands(int cmdc, t_command *cmds, char **envp);
+int	execute_piped_commands(int cmdc, t_command *cmds, t_env *env);
 
-int	interpret(char **line, char **envp)
+int	interpret(char **line, t_env *env)
 {
 	t_command	*cmds;
 	int			k;
@@ -201,7 +201,7 @@ int	interpret(char **line, char **envp)
 	k = -1;
 	while (cmds[++k].cmd)
 		;
-	execute_piped_commands(k, cmds, envp);
+	execute_piped_commands(k, cmds, env);
 	k = -1;
 	while (cmds[++k].cmd)
 		ft_strarrfree(cmds[k].cmd);
@@ -241,11 +241,6 @@ int	main(int argc, char **argv, char **envp)
 	signal(SIGINT, sig_handler);
 	signal(SIGQUIT, sig_handler);
 	init_env(&env, envp);
-	//ft_bst_print(env.envp);
-
-
-
-	//ft_bst_print(env.envp);
 	while (1)
 	{
 		char b[1000];
@@ -258,7 +253,7 @@ int	main(int argc, char **argv, char **envp)
 			free(line);
 			break ;
 		}
-		interpret(&line, envp);
+		interpret(&line, &env);
 		free(line);
 	}
 	deinit_env(&env);
