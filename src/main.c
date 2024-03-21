@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ymostows <ymostows@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 15:54:28 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/21 17:43:30 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/21 19:36:14 by ymostows         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,13 +169,13 @@ int	set_command(t_command *cmd, char *str)
 	return (1);
 }
 
-t_command	*parse(char **line)
+t_command	*parse(char **line, t_env *env)
 {
 	int			k;
 	char		**commands;
 	t_command	*out;
 
-	expand_variables(line, 0);
+	expand_variables(line, env);
 	escape_quoted(*line);
 	commands = ft_split(*line, '|');
 	out = ft_calloc(ft_strarrlen(commands) + 1, sizeof(t_command));
@@ -197,7 +197,7 @@ int	interpret(char **line, t_env *env)
 	t_command	*cmds;
 	int			k;
 
-	cmds = parse(line);
+	cmds = parse(line, env);
 	k = -1;
 	while (cmds[++k].cmd)
 		;

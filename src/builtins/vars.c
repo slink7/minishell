@@ -21,9 +21,7 @@ int	builtin_env(int argc, char **argv, t_env *env)
 	(void)	argv;
 	int			i;
 
-	env->export = ft_bst_export(env->envp);
-	if (!env->export)
-		return (1);
+	export_env(env);
 	i = 0;
 	while (env->export[i] != 0)
 	{

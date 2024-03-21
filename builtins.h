@@ -6,7 +6,7 @@
 /*   By: ymostows <ymostows@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 23:45:32 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/21 17:49:11 by ymostows         ###   ########.fr       */
+/*   Updated: 2024/03/21 19:58:08 by ymostows         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ int	builtin_env(int argc, char **argv, t_env *env);
 int	builtin_set(int argc, char **argv, t_env *env);
 int	builtin_unset(int argc, char **argv, t_env *env);
 int	builtin_export(int argc, char **argv, t_env *env);
+int	builtin_echo(int argc, char **argv, t_env *env);
 
 int	(*fetch_builtin(char *cmd))(int argc, char **argv, t_env *env);
 

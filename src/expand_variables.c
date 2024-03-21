@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand_variables.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ymostows <ymostows@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/13 17:37:27 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/18 17:41:01 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/21 19:34:21 by ymostows         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 #include "libft.h"
 #include "parsing.h"
+#include "env.h"
 
 static int	w(int c)
 {
@@ -30,7 +31,7 @@ static int		strcount(char *str, char c, int len)
 	return (out);
 }
 
-static void	add_var(t_strbuilder *builder, char *str, int *at, t_bst *env)
+static void	add_var(t_strbuilder *builder, char *str, int *at, t_env *env)
 {
 	char	*temp;
 	char	*ve;
@@ -41,7 +42,7 @@ static void	add_var(t_strbuilder *builder, char *str, int *at, t_bst *env)
 		if (!ve)
 			ve = str + ft_strlen(str);
 		strend(ve);
-		temp = ft_bst_getvar(env, str + *at);
+		temp = get_value(str + *at, env);
 		if (temp && *temp)
 		{
 			temp = ft_strdup(temp);
@@ -56,7 +57,7 @@ static void	add_var(t_strbuilder *builder, char *str, int *at, t_bst *env)
 		ft_strbuilder_addchar(builder, '$');
 }
 
-void	expand_variables(char **str, t_bst *env)
+void	expand_variables(char **str, t_env *env)
 {
 	t_strbuilder	*builder;
 	int 			chr;
