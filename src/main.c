@@ -6,7 +6,11 @@
 /*   By: ymostows <ymostows@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 15:54:28 by scambier          #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2024/03/21 19:36:14 by ymostows         ###   ########.fr       */
+=======
+/*   Updated: 2024/03/21 18:56:39 by scambier         ###   ########.fr       */
+>>>>>>> execution
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +30,6 @@
 
 void	cmd_setstream_fd(int *fd, int new_fd)
 {
-	printf("%d\n", new_fd);
 	if (!fd)
 		return ;
 	if (*fd != 0 && *fd != 1 && *fd != 2)
