@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   fetch_builtin.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ymostows <ymostows@student.42.fr>          +#+  +:+       +#+        */
+/*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 19:55:06 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/21 19:56:25 by ymostows         ###   ########.fr       */
+/*   Updated: 2024/03/22 00:39:54 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ int	(*fetch_builtin(char *cmd))(int argc, char **argv, t_env *env)
 		(t_nf){"unset", builtin_unset},
 		(t_nf){"env", builtin_env},
 		(t_nf){"echo", builtin_echo},
+		(t_nf){"niel", builtin_niel},
 		(t_nf){0}
 	};
 	int			k;

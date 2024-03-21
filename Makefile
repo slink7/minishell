@@ -15,6 +15,7 @@ SRC =\
 	src/builtins/exit.c\
 	src/builtins/vars.c\
 	src/builtins/echo.c\
+	src/builtins/niel.c\
 	src/builtins/fetch_builtin.c\
 
 SRC_BONUS =\
