@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 17:08:05 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/21 01:31:36 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/21 08:43:04 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,12 +72,27 @@ static int	cmd_exec(char **arr_cmd, t_env *env)
 int    execute_command(t_command *cmd, t_env *env)
 {
     int	out;
+	int	pid;
 
-	dup2(cmd->fd_out, 1);
-	dup2(cmd->fd_in, 0);
-	out = cmd_exec(cmd->cmd, env);
-	close(cmd->fd_in);
-	close(cmd->fd_out);
+	pid = fork();
+	if (pid == -1)
+	{
+		perror("minishell: fork");
+		return (1);
+	}
+	else if (pid == 0)
+	{
+		dup2(cmd->fd_out, 1);
+		dup2(cmd->fd_in, 0);
+		out = cmd_exec(cmd->cmd, env);
+		close(cmd->fd_in);
+		close(cmd->fd_out);
+		perror("minishell: execve");
+		exit(0);
+	}
+	else
+		waitpid(pid, &out, 0);
+	printf("%s exited with %d\n", cmd->cmd[0], out);
     return (out);
 }
 
@@ -113,7 +128,6 @@ static int    exe_pipe_rec(int cmdc, t_command *cmds, t_env *env)
 	{
 		close(fd_pipe[0]);
 		status = execute_command(cmds, env);
-		perror("minishell: execve");
 		exit(status);
 	}
 	else
