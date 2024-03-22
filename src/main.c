@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 15:54:28 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/21 22:26:19 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/22 01:48:13 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -247,11 +247,12 @@ int	main(int argc, char **argv, char **envp)
 		line = readline(b);
 		if (line && *line)
 			add_history(line);
-		if (!line || ft_strncmp(line, "exit", 5) == 0)
+		else if (!line)
 			break ;
 		interpret(&line, &env);
 		free(line);
 	}
 	deinit_env(&env);
+	printf("Exiting minishell normally... Bye!\n");
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 17:08:05 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/21 18:02:48 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/22 01:45:56 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,12 +77,21 @@ static int	cmd_exec(char **arr_cmd, t_env *env)
 		execve(cmd, arr_cmd, env->export);
 		perror("minishell: execve");
 		exit(1);
-	} else {
-		if (waitpid(pid, &status, 0) == -1) {
-			perror("minishell: waitpid");
-		}
-		return (status);
 	}
+	if (waitpid(pid, &status, 0) == -1) {
+		perror("minishell: waitpid");
+	}
+	return (status);
+}
+
+int	ifexited(int status)
+{
+	return ((status & 0x7F) == 0);
+}
+
+int	exitstatus(int status)
+{
+	return ((status & 0xFF00) >> 8);
 }
 
 int    execute_command(t_command *cmd, t_env *env)
@@ -98,6 +107,7 @@ int    execute_command(t_command *cmd, t_env *env)
 	out = cmd_exec(cmd->cmd, env);
 	dup2(dups[0], 0);
 	dup2(dups[1], 1);
+	printf("Process [%s] exited with status %d\n", cmd->cmd[0], exitstatus(out));
 	return (out);
 }
 
@@ -135,12 +145,8 @@ static int    exe_pipe_rec(int cmdc, t_command *cmds, t_env *env)
 		status = execute_command(cmds, env);
 		exit(status);
 	}
-	else
-	{
-		close(fd_pipe[1]);
-		exe_pipe_rec(cmdc - 1, cmds + 1, env);
-	}
-	return (status);
+	close(fd_pipe[1]);
+	return (exe_pipe_rec(cmdc - 1, cmds + 1, env));
 }
 
 int	execute_piped_commands(int cmdc, t_command *cmds, t_env *env)
@@ -148,5 +154,8 @@ int	execute_piped_commands(int cmdc, t_command *cmds, t_env *env)
 	int	out;
 
 	out = exe_pipe_rec(cmdc, cmds, env);
+	env->last_status = out;
+	printf("Complete cmd exited with : %d\n", out);
 	return (out);
 }
+
