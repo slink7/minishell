@@ -6,7 +6,7 @@
 /*   By: ymostows <ymostows@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 17:08:05 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/25 15:10:29 by ymostows         ###   ########.fr       */
+/*   Updated: 2024/03/25 16:20:00 by ymostows         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,10 @@ static int	cmd_exec(char **arr_cmd, t_env *env)
 		cmd = get_cmd(paths, arr_cmd[0]);
 		ft_strarrfree(paths);
 		if (!cmd)
+		{
+			ft_printf_fd(2, "minishell: Command '%s' not found\n", arr_cmd[0]);
 			exit(1);
+		}
 		execve(cmd, arr_cmd, env->export);
 		perror("minishell: execve");
 		exit(1);
