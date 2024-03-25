@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ymostows <ymostows@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 17:08:05 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/22 01:45:56 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/25 15:10:29 by ymostows         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,42 @@ static char	*get_cmd(char **paths, char *cmd)
 	return (0);
 }
 
+int	append_value(char **argv, t_env *env)
+{
+	char	*value;
+
+	value = ft_strchr(argv[0], '=') + 1;
+
+	*ft_strchr(argv[0], '+') = '\0';
+	builtin_append_value(argv[0], value, env);
+	return (0);
+}
+int	set_value(char **argv, t_env *env)
+{
+	char	*value;
+
+	value = ft_strchr(argv[0], '=') + 1;
+
+	*ft_strchr(argv[0], '=') = '\0';
+	builtin_set(argv[0], value, env);
+	return (0);
+}
+
+int	change_value(char **argv, t_env *env)
+{
+	if (*(ft_strchr(argv[0], '=') - 1) == '+')
+	{
+		if (append_value(argv, env) == 1)
+			return (1);
+	}
+	else
+	{
+		if (set_value(argv, env) == 1)
+			return (1);
+	}
+	return (0);
+}
+
 static int	cmd_exec(char **arr_cmd, t_env *env)
 {
 	int		(*builtin)(int, char**, t_env*);
@@ -61,6 +97,11 @@ static int	cmd_exec(char **arr_cmd, t_env *env)
 		out = builtin(ft_strarrlen(arr_cmd), arr_cmd, env);
 		printf("\e[0m");
 		return (out);
+	}
+	if (ft_strchr(arr_cmd[0], '='))
+	{
+		if (change_value(arr_cmd, env) == 1)
+			return (1);
 	}
 	pid = fork();
 	if (pid == -1)

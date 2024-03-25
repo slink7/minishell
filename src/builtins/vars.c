@@ -31,14 +31,36 @@ int	builtin_env(int argc, char **argv, t_env *env)
 	return (0);
 }
 
-int	builtin_set(int argc, char **argv, t_env *env)
+int	builtin_append_value(char *variable, char *value, t_env *env)
 {
-	(void)	argc;
+	char	*arg;
+	t_bst	**var;
 	
-	if (!ft_bst_find(&env->envp, argv[1]))
-		ft_bst_setvar(&env->vars, argv[1], argv[2]);
+	var = ft_bst_find(&env->envp, variable);
+	if (!var)
+	{
+		
+		if (!ft_bst_find(&env->vars, variable))
+			arg = value;
+		else
+			arg = ft_strjoin((*ft_bst_find(&env->vars, variable))->var->value, value);
+		ft_bst_setvar(&env->vars, variable, arg);
+	}
 	else
-		ft_bst_setvar(&env->envp, argv[1], argv[2]);
+	{
+		arg = ft_strjoin((*var)->var->value, value);
+		printf("%s\n", variable);
+		ft_bst_setvar(&env->envp, variable, arg);
+	}	
+	return (0);
+}
+
+int	builtin_set(char *variable, char *value, t_env *env)
+{
+	if (!ft_bst_find(&env->envp, variable))
+		ft_bst_setvar(&env->vars, variable, value);
+	else
+		ft_bst_setvar(&env->envp, variable, value);
 	return (0);
 }
 
