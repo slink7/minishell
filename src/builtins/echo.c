@@ -20,6 +20,11 @@ int	builtin_echo(int argc, char **argv, t_env *env)
 	(void) env;
 	int	i;
 
+	if (!argv[1])
+	{
+		ft_printf_fd(1,"\n");
+		return (0);
+	}
 	i = !ft_strncmp(argv[1], "-n", 3) + 1;
 	while (argv[i])
 	{
