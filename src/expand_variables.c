@@ -3,18 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   expand_variables.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ymostows <ymostows@student.42.fr>          +#+  +:+       +#+        */
+/*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/13 17:37:27 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/21 19:34:21 by ymostows         ###   ########.fr       */
+/*   Updated: 2024/03/26 22:07:37 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 
 #include "libft.h"
-#include "parsing.h"
-#include "env.h"
+#include "header.h"
 
 static int	w(int c)
 {

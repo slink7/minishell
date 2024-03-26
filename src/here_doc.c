@@ -20,9 +20,7 @@
 //#include <stdio.h>
 
 #include "libft.h"
-#include "libft/bst.h"
-#include "t_command.h"
-#include "parsing.h"
+#include "header.h"
 
 static void	here_doc_read(char *marker)
 {
@@ -33,16 +31,11 @@ static void	here_doc_read(char *marker)
 	fd = open("/tmp/here_doc", O_WRONLY | O_CREAT | O_TRUNC, 0666);
 	if (fd < 0)
 	{
-		perror("minishell: open");
-		return ;
+		return perror("minishell: open");
 	}
 	line = readline("heredoc> ");
-	/*if (!line)
-		return ;*/
 	while (ft_strncmp(line, marker, ft_strlen(line)) != 0 || ft_strlen(line) == 0)
 	{
-		/*if (!line)
-			return ;*/
 		if (ft_strncmp(line, marker, ft_strlen(line)) != 0 || ft_strlen(line) == 0)
 		{
 			write(fd, line, ft_strlen(line));
@@ -57,11 +50,10 @@ static void	here_doc_read(char *marker)
 	close(fd);
 }
 
-int	here_doc(char *marker) /*pipex(argc - 2, argv + 2) pour que ça marche*/
+int	here_doc(char *marker)
 {
 	int		fd;
 
-	//here_doc_write(buffer);
 	here_doc_read(marker);
 	fd = open("/tmp/here_doc", O_RDONLY, 0644);
 	if (fd == -1)

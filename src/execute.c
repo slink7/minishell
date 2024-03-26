@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ymostows <ymostows@student.42.fr>          +#+  +:+       +#+        */
+/*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 17:08:05 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/25 16:20:00 by ymostows         ###   ########.fr       */
+/*   Updated: 2024/03/26 23:06:21 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,33 +16,13 @@
 #include <sys/wait.h>
 
 #include "libft.h"
-#include "t_command.h"
-#include "env.h"
-#include "builtins.h"
+#include "header.h"
 
 static char	*find_path(char **envp)
 {
 	while (ft_strncmp("PATH", *envp, 4))
 		envp++;
 	return (*envp + 5);
-}
-
-static char	*get_cmd(char **paths, char *cmd)
-{
-	char	*tmp;
-	char	*command;
-
-	while (*paths)
-	{
-		tmp = ft_strjoin(*paths, "/");
-		command = ft_strjoin(tmp, cmd);
-		free(tmp);
-		if (access(command, 0) == 0)
-			return (command);
-		free(command);
-		paths++;
-	}
-	return (0);
 }
 
 int	append_value(char **argv, t_env *env)
@@ -52,9 +32,10 @@ int	append_value(char **argv, t_env *env)
 	value = ft_strchr(argv[0], '=') + 1;
 
 	*ft_strchr(argv[0], '+') = '\0';
-	builtin_append_value(argv[0], value, env);
+	env_var_append(argv[0], value, env);
 	return (0);
 }
+
 int	set_value(char **argv, t_env *env)
 {
 	char	*value;
@@ -62,23 +43,35 @@ int	set_value(char **argv, t_env *env)
 	value = ft_strchr(argv[0], '=') + 1;
 
 	*ft_strchr(argv[0], '=') = '\0';
-	builtin_set(argv[0], value, env);
+	env_var_set(argv[0], value, env);
 	return (0);
 }
 
 int	change_value(char **argv, t_env *env)
 {
 	if (*(ft_strchr(argv[0], '=') - 1) == '+')
-	{
-		if (append_value(argv, env) == 1)
-			return (1);
-	}
+		return (append_value(argv, env));
 	else
+		return (set_value(argv, env) == 1);
+}
+
+int	execve_wrap(char *path, char **argv, char **envp)
+{
+	int	pid;
+	int	out;
+
+	pid = fork();
+	if (pid == -1)
+		return (perror2(1, "minishell"));
+	else if (pid == 0)
 	{
-		if (set_value(argv, env) == 1)
-			return (1);
+		execve(path, argv, envp);
+		perror("minishell: execve");
+		exit(1);
 	}
-	return (0);
+	if (waitpid(pid, &out, 0) == -1)
+		return (perror2(1, "minishell: waitpid"));
+	return (out);
 }
 
 static int	cmd_exec(char **arr_cmd, t_env *env)
@@ -86,45 +79,33 @@ static int	cmd_exec(char **arr_cmd, t_env *env)
 	int		(*builtin)(int, char**, t_env*);
 	char	**paths;
 	char	*cmd;
-	int		out;
-	int		pid;
 	int		status;
 
 	builtin = fetch_builtin(arr_cmd[0]);
 	if (builtin)
 	{
 		printf("\e[0;32mBuiltin:\n");
-		out = builtin(ft_strarrlen(arr_cmd), arr_cmd, env);
+		status = builtin(ft_strarrlen(arr_cmd), arr_cmd, env);
 		printf("\e[0m");
-		return (out);
+		return (status);
 	}
 	if (ft_strchr(arr_cmd[0], '='))
 	{
 		if (change_value(arr_cmd, env) == 1)
 			return (1);
+		return (0);
 	}
-	pid = fork();
-	if (pid == -1)
+
+	export_env(env);
+	paths = ft_split(find_path(env->exp), ':');
+	cmd = find_executable(paths, arr_cmd[0]);
+	ft_strarrfree(paths);
+	if (!cmd)
 	{
-		perror("minishell: fork");
+		ft_printf_fd(2, "minishell: Command '%s' not found\n", arr_cmd[0]);
 		return (1);
-	} else if (pid == 0) {
-		export_env(env);
-		paths = ft_split(find_path(env->export), ':');
-		cmd = get_cmd(paths, arr_cmd[0]);
-		ft_strarrfree(paths);
-		if (!cmd)
-		{
-			ft_printf_fd(2, "minishell: Command '%s' not found\n", arr_cmd[0]);
-			exit(1);
-		}
-		execve(cmd, arr_cmd, env->export);
-		perror("minishell: execve");
-		exit(1);
 	}
-	if (waitpid(pid, &status, 0) == -1) {
-		perror("minishell: waitpid");
-	}
+	status = execve_wrap(cmd, arr_cmd, env->exp);
 	return (status);
 }
 
@@ -143,7 +124,6 @@ int    execute_command(t_command *cmd, t_env *env)
     int	out;
 	int	dups[2];
 
-
 	dups[0] = dup(0);
 	dups[1] = dup(1);
 	dup2(cmd->fd_in, 0);
@@ -159,36 +139,22 @@ static int    exe_pipe_rec(int cmdc, t_command *cmds, t_env *env)
 {
     int	pid;
     int	fd_pipe[2];
-	int	status;
 
     if (cmdc < 1 || !cmds)
 		return (0);
 	if (cmdc == 1)
 		return (execute_command(cmds, env));
-	status = 0;
 	if (pipe(fd_pipe))
-	{
-		perror("minishell: pipe");
-		return (1);
-	}
-
+		return (perror2(1, "minishell: pipe"));
 	if (cmds[0].fd_out == 1)
 		cmds[0].fd_out = fd_pipe[1];
 	if (cmds[1].fd_in == 0)
 		cmds[1].fd_in = fd_pipe[0];
-	
 	pid = fork();
 	if (pid == -1)
-	{
-		perror("minishell: fork");
-		return (1);
-	}
-	else if (pid == 0)
-	{
-		close(fd_pipe[0]);
-		status = execute_command(cmds, env);
-		exit(status);
-	}
+		return (perror2(1, "minishell: fork"));
+	else if (pid == 0 && (close(fd_pipe[0]) || 1))
+		exit(execute_command(cmds, env));
 	close(fd_pipe[1]);
 	return (exe_pipe_rec(cmdc - 1, cmds + 1, env));
 }

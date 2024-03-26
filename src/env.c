@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ymostows <ymostows@student.42.fr>          +#+  +:+       +#+        */
+/*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 23:40:36 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/21 19:38:00 by ymostows         ###   ########.fr       */
+/*   Updated: 2024/03/26 22:16:59 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,7 @@
 #include <stdio.h>
 
 #include "libft.h"
-#include "env.h"
-#include "../libft/bst.h"
+#include "header.h"
 
 int	init_env(t_env *env, char **envp)
 {
@@ -34,7 +33,7 @@ int	init_env(t_env *env, char **envp)
 		i++;
 	}
 	env->last_status = 0;
-	env->export = 0;
+	env->exp = 0;
 	return (1);
 }
 
@@ -62,7 +61,7 @@ int	deinit_env(t_env *env)
 
 void	export_env(t_env *env)
 {
-	if (env->export)
-		free(env->export);
-	env->export = ft_bst_export(env->envp);
+	if (env->exp)
+		free(env->exp);
+	env->exp = ft_bst_export(env->envp);
 }

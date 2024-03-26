@@ -6,12 +6,11 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/21 22:22:28 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/21 22:28:15 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/26 22:06:55 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "t_command.h"
-#include "env.h"
+#include "header.h"
 
 int    execute_command(t_command *cmd, t_env *env);
 

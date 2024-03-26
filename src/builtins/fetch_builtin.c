@@ -6,13 +6,12 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 19:55:06 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/22 00:39:54 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/26 22:06:51 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
-#include "env.h"
-#include "builtins.h"
+#include "header.h"
 
 typedef struct s_nf {
 	char	*name;
@@ -26,7 +25,6 @@ int	(*fetch_builtin(char *cmd))(int argc, char **argv, t_env *env)
 		(t_nf){"pwd", builtin_pwd},
 		(t_nf){"exit", builtin_exit},
 		(t_nf){"export", builtin_export},
-		(t_nf){"set", builtin_set},
 		(t_nf){"unset", builtin_unset},
 		(t_nf){"env", builtin_env},
 		(t_nf){"echo", builtin_echo},

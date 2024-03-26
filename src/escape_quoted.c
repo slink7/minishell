@@ -6,12 +6,12 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/13 17:47:16 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/18 18:05:10 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/26 22:07:23 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
-#include "parsing.h"
+#include "header.h"
 
 void	escape_quoted(char *str)
 {

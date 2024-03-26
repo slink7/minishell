@@ -10,9 +10,10 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
 #include <stdio.h>
-#include "env.h"
+
+#include "libft.h"
+#include "header.h"
 
 int	builtin_echo(int argc, char **argv, t_env *env)
 {
