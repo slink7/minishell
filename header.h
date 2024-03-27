@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 21:56:21 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/26 22:09:23 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/27 14:42:28 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,19 +30,19 @@ void	export_env(t_env *env);
 char	*get_value(char *name, t_env *env);
 
 //===BUILTINS===
-int	builtin_cd(int argc, char **argv, t_env *env);
-int	builtin_pwd(int argc, char **argv, t_env *env);
-int	builtin_exit(int argc, char **argv, t_env *envp);
-int	builtin_env(int argc, char **argv, t_env *env);
-int	builtin_unset(int argc, char **argv, t_env *env);
-int	builtin_export(int argc, char **argv, t_env *env);
-int	builtin_echo(int argc, char **argv, t_env *env);
-int	builtin_niel(int argc, char **argv, t_env *env);
+int		builtin_cd(int argc, char **argv, t_env *env);
+int		builtin_pwd(int argc, char **argv, t_env *env);
+int		builtin_exit(int argc, char **argv, t_env *envp);
+int		builtin_env(int argc, char **argv, t_env *env);
+int		builtin_unset(int argc, char **argv, t_env *env);
+int		builtin_export(int argc, char **argv, t_env *env);
+int		builtin_echo(int argc, char **argv, t_env *env);
+int		builtin_niel(int argc, char **argv, t_env *env);
 
-int	(*fetch_builtin(char *cmd))(int argc, char **argv, t_env *env);
+int		(*fetch_builtin(char *cmd))(int argc, char **argv, t_env *env);
 
-int	env_var_append(char *var, char *value, t_env *env);
-int	env_var_set(char *var, char *value, t_env *env);
+int		env_var_append(char *var, char *value, t_env *env);
+int		env_var_set(char *var, char *value, t_env *env);
 
 //===PARSING===
 void	unescape(char *str);
@@ -60,7 +60,7 @@ typedef struct s_command {
 int		here_doc(char *marker);
 
 //===UTILS===
-int	perror2(int ret, char *prompt);
+int		perror2(int ret, char *prompt);
 
 //===EXES===
 char	*is_executable(char *path, char *file);

@@ -20,9 +20,9 @@ int	builtin_cd(int argc, char **argv, t_env *env)
 {
 	char	old_cwd[1024];
 	char	new_cwd[1024];
+
 	(void) argc;
 	(void) env;
-	
 	if (getcwd(old_cwd, sizeof(old_cwd)) != NULL)
 		ft_bst_setvar(&env->envp, "OLDPWD", old_cwd);
 	if (chdir(argv[1]) != 0)

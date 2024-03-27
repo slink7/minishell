@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 21:37:56 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/27 13:37:20 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/27 14:57:21 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ char	*is_executable(char *path, char *file)
 {
 	char	*temp;
 
-	temp = ft_strsjoin((char*[]){path, "/", file, 0}, "");
+	temp = ft_strsjoin((char *[]){path, "/", file, 0}, "");
 	if (access(temp, 0) == 0)
 		return (temp);
 	free(temp);

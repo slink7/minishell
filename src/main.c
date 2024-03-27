@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 15:54:28 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/26 22:07:57 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/27 14:56:24 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,7 +162,6 @@ int	set_command(t_command *cmd, char *str)
 	type = -1;
 	while (cmd->cmd[++type])
 		unescape(cmd->cmd[type]);
-	
 	return (1);
 }
 
@@ -216,7 +215,8 @@ void	sig_handler(int signum)
 		rl_redisplay();
 	}
 }
-void	export(int	argc, char **argv, t_env *env)
+
+void	export(int argc, char **argv, t_env *env)
 {
 	if (!argc)
 	{
@@ -230,11 +230,11 @@ void	export(int	argc, char **argv, t_env *env)
 
 int	main(int argc, char **argv, char **envp)
 {
-	(void) argc;
-	(void) argv;
 	t_env	env;
 	char	*line;
 
+	(void) argc;
+	(void) argv;
 	signal(SIGINT, sig_handler);
 	signal(SIGQUIT, sig_handler);
 	init_env(&env, envp);

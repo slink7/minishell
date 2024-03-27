@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 23:40:36 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/27 13:51:05 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/27 15:02:23 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int	init_env(t_env *env, char **envp)
 {
 	int		i;
 	char	*temp;
-	
+
 	env->envp = 0;
 	env->vars = 0;
 	i = 0;

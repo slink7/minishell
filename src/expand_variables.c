@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/13 17:37:27 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/26 22:07:37 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/27 14:49:47 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,11 @@
 
 static int	w(int c)
 {
-	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_';
+	return ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
+		|| (c >= '0' && c <= '9') || c == '_');
 }
 
-static int		strcount(char *str, char c, int len)
+static int	strcount(char *str, char c, int len)
 {
 	int	out;
 
@@ -59,7 +60,7 @@ static void	add_var(t_strbuilder *builder, char *str, int *at, t_env *env)
 void	expand_variables(char **str, t_env *env)
 {
 	t_strbuilder	*builder;
-	int 			chr;
+	int				chr;
 	int				k;
 
 	builder = ft_strbuilder_new();

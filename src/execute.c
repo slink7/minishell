@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 17:08:05 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/27 13:40:20 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/27 15:00:07 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ int	append_value(char **argv, t_env *env)
 	char	*value;
 
 	value = ft_strchr(argv[0], '=') + 1;
-
 	*ft_strchr(argv[0], '+') = '\0';
 	env_var_append(argv[0], value, env);
 	return (0);
@@ -34,7 +33,6 @@ int	set_value(char **argv, t_env *env)
 	char	*value;
 
 	value = ft_strchr(argv[0], '=') + 1;
-
 	*ft_strchr(argv[0], '=') = '\0';
 	env_var_set(argv[0], value, env);
 	return (0);
@@ -106,9 +104,9 @@ int	exitstatus(int status)
 	return ((status & 0xFF00) >> 8);
 }
 
-int    execute_command(t_command *cmd, t_env *env)
+int	execute_command(t_command *cmd, t_env *env)
 {
-    int	out;
+	int	out;
 	int	dups[2];
 
 	dups[0] = dup(0);
@@ -118,16 +116,15 @@ int    execute_command(t_command *cmd, t_env *env)
 	out = cmd_exec(cmd->cmd, env);
 	dup2(dups[0], 0);
 	dup2(dups[1], 1);
-	printf("Process [%s] exited with status %d\n", cmd->cmd[0], exitstatus(out));
 	return (out);
 }
 
-static int    exe_pipe_rec(int cmdc, t_command *cmds, t_env *env)
+static int	exe_pipe_rec(int cmdc, t_command *cmds, t_env *env)
 {
-    int	pid;
-    int	fd_pipe[2];
+	int	pid;
+	int	fd_pipe[2];
 
-    if (cmdc < 1 || !cmds)
+	if (cmdc < 1 || !cmds)
 		return (0);
 	if (cmdc == 1)
 		return (execute_command(cmds, env));
@@ -156,4 +153,3 @@ int	execute_piped_commands(int cmdc, t_command *cmds, t_env *env)
 	printf("Complete cmd exited with : %d\n", out);
 	return (out);
 }
-
