@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 17:08:05 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/26 23:06:21 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/27 13:40:20 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,6 @@
 
 #include "libft.h"
 #include "header.h"
-
-static char	*find_path(char **envp)
-{
-	while (ft_strncmp("PATH", *envp, 4))
-		envp++;
-	return (*envp + 5);
-}
 
 int	append_value(char **argv, t_env *env)
 {
@@ -78,34 +71,28 @@ static int	cmd_exec(char **arr_cmd, t_env *env)
 {
 	int		(*builtin)(int, char**, t_env*);
 	char	**paths;
-	char	*cmd;
+	char	*exe_path;
 	int		status;
 
 	builtin = fetch_builtin(arr_cmd[0]);
 	if (builtin)
-	{
-		printf("\e[0;32mBuiltin:\n");
-		status = builtin(ft_strarrlen(arr_cmd), arr_cmd, env);
-		printf("\e[0m");
-		return (status);
-	}
+		return (builtin(ft_strarrlen(arr_cmd), arr_cmd, env));
 	if (ft_strchr(arr_cmd[0], '='))
 	{
 		if (change_value(arr_cmd, env) == 1)
 			return (1);
 		return (0);
 	}
-
-	export_env(env);
-	paths = ft_split(find_path(env->exp), ':');
-	cmd = find_executable(paths, arr_cmd[0]);
+	paths = ft_split(ft_bst_getvar(env->envp, "PATH"), ':');
+	exe_path = find_executable(paths, arr_cmd[0]);
 	ft_strarrfree(paths);
-	if (!cmd)
+	if (!exe_path)
 	{
 		ft_printf_fd(2, "minishell: Command '%s' not found\n", arr_cmd[0]);
 		return (1);
 	}
-	status = execve_wrap(cmd, arr_cmd, env->exp);
+	status = execve_wrap(exe_path, arr_cmd, env->exp);
+	free(exe_path);
 	return (status);
 }
 
@@ -163,6 +150,7 @@ int	execute_piped_commands(int cmdc, t_command *cmds, t_env *env)
 {
 	int	out;
 
+	export_env(env);
 	out = exe_pipe_rec(cmdc, cmds, env);
 	env->last_status = out;
 	printf("Complete cmd exited with : %d\n", out);

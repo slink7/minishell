@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 23:40:36 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/26 22:16:59 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/27 13:51:05 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,15 +39,14 @@ int	init_env(t_env *env, char **envp)
 
 char	*get_value(char *name, t_env *env)
 {
-	t_bst	**var_envp;
-	t_bst	**var_vars;
+	t_bst	**var;
 
-	var_envp = ft_bst_find(&env->envp, name);
-	var_vars = ft_bst_find(&env->vars, name);
-	if (var_vars != 0)
-		return ((*var_vars)->var->value);
-	else if (var_envp != 0)
-		return ((*var_envp)->var->value);
+	var = ft_bst_find(&env->vars, name);
+	if (var != 0)
+		return ((*var)->var->value);
+	var = ft_bst_find(&env->envp, name);
+	if (var != 0)
+		return ((*var)->var->value);
 	else
 		return (0);
 }
@@ -56,12 +55,14 @@ int	deinit_env(t_env *env)
 {
 	ft_bst_free(&env->envp);
 	ft_bst_free(&env->vars);
+	if (env->exp)
+		ft_strarrfree(env->exp);
 	return (1);
 }
 
 void	export_env(t_env *env)
 {
 	if (env->exp)
-		free(env->exp);
+		ft_strarrfree(env->exp);
 	env->exp = ft_bst_export(env->envp);
 }
