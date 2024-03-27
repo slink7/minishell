@@ -17,22 +17,21 @@
 
 int	builtin_echo(int argc, char **argv, t_env *env)
 {
-	(void) argc;
-	(void) env;
 	int	i;
+	int	has_flag;
 
-	if (!argv[1])
+	(void) env;
+	has_flag = 0;
+	if (argc > 1)
+		has_flag = ft_strncmp(argv[1], "-n", 3) == 0;
+	i = has_flag;
+	while (++i < argc)
 	{
-		ft_printf_fd(1,"\n");
-		return (0);
+		ft_printf_fd(1, "%s", argv[i]);
+		if (i < argc - 1)
+			ft_printf_fd(1, " ");
 	}
-	i = !ft_strncmp(argv[1], "-n", 3) + 1;
-	while (argv[i])
-	{
-		ft_printf_fd(1,"%s", argv[i]);
-		i++;
-	}
-	if (ft_strncmp(argv[1], "-n", 3) != 0)
-		ft_printf_fd(1,"\n");
+	if (!has_flag)
+		ft_printf_fd(1, "\n");
 	return (0);
 }
