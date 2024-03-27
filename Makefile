@@ -75,5 +75,7 @@ fclean : clean
 #===RE===
 re : fclean all
 
+valgrind : all
+	valgrind --leak-check=full --show-leak-kinds=all --suppressions=valgrind.cfg ./minishell
 
 .PHONY : re fclean clean all default bonus
