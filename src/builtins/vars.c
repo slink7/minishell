@@ -21,13 +21,9 @@ int	builtin_env(int argc, char **argv, t_env *env)
 
 	(void) argc;
 	(void) argv;
-	export_env(env);
-	i = 0;
-	while (env->exp[i] != 0)
-	{
+	i = -1;
+	while (++i < argc)
 		printf("%s\n", env->exp[i]);
-		i++;
-	}
 	return (0);
 }
 
@@ -50,37 +46,5 @@ int	builtin_unset(int argc, char **argv, t_env *env)
 		ft_bst_remove(&env->vars, argv[1]);
 	else
 		ft_bst_remove(&env->envp, argv[1]);
-	return (0);
-}
-
-int	env_var_set(char *variable, char *value, t_env *env)
-{
-	if (!ft_bst_find(&env->envp, variable))
-		ft_bst_setvar(&env->vars, variable, value);
-	else
-		ft_bst_setvar(&env->envp, variable, value);
-	return (0);
-}
-
-int	env_var_append(char *variable, char *value, t_env *env)
-{
-	char	*arg;
-	t_bst	**var;
-
-	var = ft_bst_find(&env->envp, variable);
-	if (!var)
-	{
-		if (!ft_bst_find(&env->vars, variable))
-			arg = value;
-		else
-			arg = ft_strjoin((*ft_bst_find(&env->vars, variable))->var->value, value);
-		ft_bst_setvar(&env->vars, variable, arg);
-	}
-	else
-	{
-		arg = ft_strjoin((*var)->var->value, value);
-		printf("%s\n", variable);
-		ft_bst_setvar(&env->envp, variable, arg);
-	}
 	return (0);
 }

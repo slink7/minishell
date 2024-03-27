@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 17:08:05 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/27 15:00:07 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/27 16:38:30 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,33 +18,7 @@
 #include "libft.h"
 #include "header.h"
 
-int	append_value(char **argv, t_env *env)
-{
-	char	*value;
 
-	value = ft_strchr(argv[0], '=') + 1;
-	*ft_strchr(argv[0], '+') = '\0';
-	env_var_append(argv[0], value, env);
-	return (0);
-}
-
-int	set_value(char **argv, t_env *env)
-{
-	char	*value;
-
-	value = ft_strchr(argv[0], '=') + 1;
-	*ft_strchr(argv[0], '=') = '\0';
-	env_var_set(argv[0], value, env);
-	return (0);
-}
-
-int	change_value(char **argv, t_env *env)
-{
-	if (*(ft_strchr(argv[0], '=') - 1) == '+')
-		return (append_value(argv, env));
-	else
-		return (set_value(argv, env) == 1);
-}
 
 int	execve_wrap(char *path, char **argv, char **envp)
 {
@@ -77,7 +51,7 @@ static int	cmd_exec(char **arr_cmd, t_env *env)
 		return (builtin(ft_strarrlen(arr_cmd), arr_cmd, env));
 	if (ft_strchr(arr_cmd[0], '='))
 	{
-		if (change_value(arr_cmd, env) == 1)
+		if (env_change_value(env, arr_cmd[0]) == 1)
 			return (1);
 		return (0);
 	}
@@ -147,7 +121,7 @@ int	execute_piped_commands(int cmdc, t_command *cmds, t_env *env)
 {
 	int	out;
 
-	export_env(env);
+	env_export(env);
 	out = exe_pipe_rec(cmdc, cmds, env);
 	env->last_status = out;
 	printf("Complete cmd exited with : %d\n", out);

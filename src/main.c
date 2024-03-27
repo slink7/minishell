@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 15:54:28 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/27 14:56:24 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/27 15:42:37 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -205,7 +205,7 @@ int	interpret(char **line, t_env *env)
 	return (1);
 }
 
-void	sig_handler(int signum)
+static void	sig_handler(int signum)
 {
 	if (signum == SIGINT)
 	{
@@ -216,18 +216,6 @@ void	sig_handler(int signum)
 	}
 }
 
-void	export(int argc, char **argv, t_env *env)
-{
-	if (!argc)
-	{
-		ft_bst_print(env->envp);
-		return ;
-	}
-	ft_bst_setvar(&env->envp, argv[0], argv[1]);
-}
-
-
-
 int	main(int argc, char **argv, char **envp)
 {
 	t_env	env;
@@ -237,20 +225,20 @@ int	main(int argc, char **argv, char **envp)
 	(void) argv;
 	signal(SIGINT, sig_handler);
 	signal(SIGQUIT, sig_handler);
-	init_env(&env, envp);
+	env_init(&env, envp);
 	while (env.last_status != -1)
 	{
 		char b[1024];
 		sprintf(b, "\e[22;34mminishell(%d)>\e[0m", getpid());
 		line = readline(b);
-		if (line && *line)
-			add_history(line);
-		else if (!line)
+		if (!line)
 			break ;
+		if (*line)
+			add_history(line);
 		interpret(&line, &env);
 		free(line);
 	}
-	deinit_env(&env);
+	env_deinit(&env);
 	printf("Exiting minishell normally... Bye!\n");
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 21:56:21 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/27 14:42:28 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/27 16:31:40 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,13 @@ typedef struct s_env
 	int		last_status;
 }	t_env;
 
-int		init_env(t_env *env, char **envp);
-int		deinit_env(t_env *env);
-void	export_env(t_env *env);
-char	*get_value(char *name, t_env *env);
+int		env_init(t_env *env, char **envp);
+int		env_deinit(t_env *env);
+void	env_export(t_env *env);
+char	*env_get_value(t_env *env, char *name);
+int		env_var_append(t_env *env, char *name, char *value);
+int		env_var_set(t_env *env, char *name, char *value);
+int		env_change_value(t_env *env, char *cmd);
 
 //===BUILTINS===
 int		builtin_cd(int argc, char **argv, t_env *env);
@@ -41,8 +44,6 @@ int		builtin_niel(int argc, char **argv, t_env *env);
 
 int		(*fetch_builtin(char *cmd))(int argc, char **argv, t_env *env);
 
-int		env_var_append(char *var, char *value, t_env *env);
-int		env_var_set(char *var, char *value, t_env *env);
 
 //===PARSING===
 void	unescape(char *str);
