@@ -21,18 +21,21 @@ int	builtin_env(int argc, char **argv, t_env *env)
 
 	(void) argc;
 	(void) argv;
-	i = -1;
-	while (++i < argc)
-		printf("%s\n", env->exp[i]);
+	i = 0;
+	while (env->exp[i])
+		printf("%s\n", env->exp[i++]);
 	return (0);
 }
 
 int	builtin_export(int argc, char **argv, t_env *env)
 {
+	t_bst	**bst;
+
 	if (argc == 1)
 		return (builtin_env(argc, argv, env));
-	if (ft_bst_find(&env->vars, argv[1]) != 0)
-		ft_bst_setvar(&env->envp, argv[1], (*ft_bst_find(&env->vars, argv[1]))->var->value);
+	bst = ft_bst_find(&env->vars, argv[1]);
+	if (bst != 0)
+		ft_bst_setvar(&env->envp, argv[1], (*bst)->var->value);
 	else
 		ft_bst_setvar(&env->envp, argv[1], "");
 	ft_bst_remove(&env->vars, argv[1]);
