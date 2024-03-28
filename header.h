@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 21:56:21 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/28 18:08:35 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/28 18:11:53 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,6 @@ int		builtin_niel(int argc, char **argv, t_env *env);
 
 int		(*fetch_builtin(char *cmd))(int argc, char **argv, t_env *env);
 
-
 //===PARSING===
 void	unescape(char *str);
 void	strnesc(char *str, int len);
@@ -66,7 +65,6 @@ typedef struct s_command {
 int		here_doc(char *marker);
 int		exe_command(t_command *cmd, t_env *env);
 int		exe_piped_commands(int cmdc, t_command *cmds, t_env *env);
-
 
 //===UTILS===
 int		perror2(int ret, char *prompt);
