@@ -1,5 +1,0 @@
-# fix forks :
-    execve does not return on success
-	so fds are maybe not properly closed
-# Add variable setting & concatting
-# Invalid file should stop cmd execution
