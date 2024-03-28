@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 15:54:28 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/27 15:42:37 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/28 18:08:48 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,7 +186,6 @@ t_command	*parse(char **line, t_env *env)
 	return (out);
 }
 
-int	execute_piped_commands(int cmdc, t_command *cmds, t_env *env);
 
 int	interpret(char **line, t_env *env)
 {
@@ -197,7 +196,7 @@ int	interpret(char **line, t_env *env)
 	k = -1;
 	while (cmds[++k].cmd)
 		;
-	execute_piped_commands(k, cmds, env);
+	exe_piped_commands(k, cmds, env);
 	k = -1;
 	while (cmds[++k].cmd)
 		ft_strarrfree(cmds[k].cmd);

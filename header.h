@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 21:56:21 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/27 16:31:40 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/28 18:08:35 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,11 @@
 # define HEADER_H
 
 # include "libft.h"
+
+# define ERR_FORK "minishell: fork"
+# define ERR_PIPE "minishell: pipe"
+# define ERR_EXECVE "minishell: execve"
+# define ERR_WAITPID "minishell: waitpid"
 
 //===ENV===
 typedef struct s_env
@@ -59,9 +64,13 @@ typedef struct s_command {
 	int		fd_out;
 }	t_command;
 int		here_doc(char *marker);
+int		exe_command(t_command *cmd, t_env *env);
+int		exe_piped_commands(int cmdc, t_command *cmds, t_env *env);
+
 
 //===UTILS===
 int		perror2(int ret, char *prompt);
+int		exitstatus(int status);
 
 //===EXES===
 char	*is_executable(char *path, char *file);

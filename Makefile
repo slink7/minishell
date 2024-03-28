@@ -11,6 +11,7 @@ SRC =\
 	src/here_doc.c\
 	src/execute.c\
 	src/env.c\
+	src/env_vars.c\
 	src/builtins/dir.c\
 	src/builtins/exit.c\
 	src/builtins/vars.c\
@@ -18,7 +19,7 @@ SRC =\
 	src/builtins/niel.c\
 	src/builtins/fetch_builtin.c\
 	src/utils.c\
-	src/find_executable.c
+	src/find_executable.c\
 
 SRC_BONUS =\
 	
