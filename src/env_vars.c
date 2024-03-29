@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 15:36:33 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/28 18:33:53 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/29 03:35:44 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include "libft.h"
 #include "header.h"
 
-char	*env_get_value(t_env *env, char *name)
+char	*env_var_get(t_env *env, char *name)
 {
 	t_bst	**var;
 
@@ -53,7 +53,7 @@ int	env_var_append(t_env *env, char *variable, char *value)
 	return (0);
 }
 
-int	env_change_value(t_env *env, char *cmd)
+int	env_var_change(t_env *env, char *cmd)
 {
 	char	*value;
 

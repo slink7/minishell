@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 15:54:28 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/28 18:08:48 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/29 03:38:09 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,28 +22,27 @@
 #include "libft.h"
 #include "header.h"
 
-void	cmd_setstream_fd(int *fd, int new_fd)
+int	cmd_setstream_fd(int *fd, int new_fd)
 {
 	if (!fd)
-		return ;
-	if (*fd != 0 && *fd != 1 && *fd != 2)
+		return (0);
+	if (*fd < 0 || *fd > 2)
 		close(*fd);
 	*fd = new_fd;
+	return (1);
+
 }
 
-void	cmd_setstream(int *fd, char *file, int flags, int perms)
+int	cmd_setstream(int *fd, char *file, int flags, int perms)
 {
 	int	new_fd;
 
-	if (!file)
-		return ;
+	if (!file || !*file)
+		return (1);
 	new_fd = open(file, flags, perms);
 	if (new_fd == -1)
-	{
-		perror("minishell : open");
-		return ;
-	}
-	cmd_setstream_fd(fd, new_fd);
+		return (perror2(0, ERR_OPEN));
+	return (cmd_setstream_fd(fd, new_fd));
 }
 
 #define TYPE_IN1 1

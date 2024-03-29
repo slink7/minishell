@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 21:56:21 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/28 18:11:53 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/29 03:35:22 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 
 # define ERR_FORK "minishell: fork"
 # define ERR_PIPE "minishell: pipe"
+# define ERR_OPEN "minishell: open"
 # define ERR_EXECVE "minishell: execve"
 # define ERR_WAITPID "minishell: waitpid"
 
@@ -32,10 +33,10 @@ typedef struct s_env
 int		env_init(t_env *env, char **envp);
 int		env_deinit(t_env *env);
 void	env_export(t_env *env);
-char	*env_get_value(t_env *env, char *name);
+char	*env_var_get(t_env *env, char *name);
 int		env_var_append(t_env *env, char *name, char *value);
 int		env_var_set(t_env *env, char *name, char *value);
-int		env_change_value(t_env *env, char *cmd);
+int		env_var_change(t_env *env, char *cmd);
 
 //===BUILTINS===
 int		builtin_cd(int argc, char **argv, t_env *env);
