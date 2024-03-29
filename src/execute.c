@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 17:08:05 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/28 18:08:22 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/29 03:38:35 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ static int	exe_executable(char **arr_cmd, t_env *env)
 	if (builtin)
 		return (builtin(ft_strarrlen(arr_cmd), arr_cmd, env));
 	if (ft_strchr(arr_cmd[0], '='))
-		return (env_change_value(env, arr_cmd[0]) == 1);
+		return (env_var_change(env, arr_cmd[0]) == 1);
 	paths = ft_split(ft_bst_getvar(env->envp, "PATH"), ':');
 	exe_path = find_executable(paths, arr_cmd[0]);
 	ft_strarrfree(paths);

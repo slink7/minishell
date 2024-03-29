@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 15:36:33 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/29 03:35:44 by scambier         ###   ########.fr       */
+/*   Updated: 2024/03/29 03:38:20 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ int	env_var_append(t_env *env, char *variable, char *value)
 {
 	char	*temp;
 
-	temp = env_get_value(env, variable);
+	temp = env_var_get(env, variable);
 	if (!temp)
 	{
 		env_var_set(env, variable, value);
