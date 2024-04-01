@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 15:54:28 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/29 03:38:09 by scambier         ###   ########.fr       */
+/*   Updated: 2024/04/01 14:35:57 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,41 +83,6 @@ int	next_redir(char *str, char **out)
 		type = TYPE_OUT2;
 	}
 	return (type);
-}
-
-int s(int c)
-{
-	return (c == ' ' || c == '\t' || c == '\n' || c == '\0');
-}
-
-char	*get_next_word(char *str, int (*sep)(int))
-{
-	int	k;
-	int	start;
-
-	start = 0;
-	k = -1;
-	while (str[++k])
-	{
-		if (!start && sep(str[k]) && !sep(str[k + 1]))
-			start = k + 1;
-		else if (!sep(str[k]) && sep(str[k + 1]))
-			return (ft_substr(str, start, k + 1 - start));
-	}
-	return (0);
-}
-
-void	goto_falling_edge(char **str, int (*sep)(int))
-{
-	char	*s;
-	int		k;
-
-	s = *str;
-	k = -1;
-	while (s[++k])
-		if (!sep(s[k]) && sep(s[k + 1]))
-			break ;
-	*str = s + k;
 }
 
 int	set_command(t_command *cmd, char *str)

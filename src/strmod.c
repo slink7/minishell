@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/13 17:50:35 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/18 17:28:57 by scambier         ###   ########.fr       */
+/*   Updated: 2024/04/01 14:36:04 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,4 +41,34 @@ void	strend(char *str)
 	temp = c;
 	c = *str;
 	*str = temp;
+}
+
+void	goto_falling_edge(char **str, int (*sep)(int))
+{
+	char	*s;
+	int		k;
+
+	s = *str;
+	k = -1;
+	while (s[++k])
+		if (!sep(s[k]) && sep(s[k + 1]))
+			break ;
+	*str = s + k;
+}
+
+char	*get_next_word(char *str, int (*sep)(int))
+{
+	int	k;
+	int	start;
+
+	start = 0;
+	k = -1;
+	while (str[++k])
+	{
+		if (!start && sep(str[k]) && !sep(str[k + 1]))
+			start = k + 1;
+		else if (!sep(str[k]) && sep(str[k + 1]))
+			return (ft_substr(str, start, k + 1 - start));
+	}
+	return (0);
 }

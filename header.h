@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 21:56:21 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/29 03:35:22 by scambier         ###   ########.fr       */
+/*   Updated: 2024/04/01 14:36:39 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,8 @@ void	strnesc(char *str, int len);
 void	strend(char *str);
 void	escape_quoted(char *str);
 void	expand_variables(char **str, t_env *env);
+void	goto_falling_edge(char **str, int (*sep)(int));
+char	*get_next_word(char *str, int (*sep)(int));
 
 //===EXECUTION===
 typedef struct s_command {
@@ -74,5 +76,9 @@ int		exitstatus(int status);
 //===EXES===
 char	*is_executable(char *path, char *file);
 char	*find_executable(char **paths, char *file);
+
+//===PREDICATS===
+int	w(int c);
+int s(int c);
 
 #endif

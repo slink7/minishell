@@ -20,6 +20,7 @@ SRC =\
 	src/builtins/fetch_builtin.c\
 	src/utils.c\
 	src/find_executable.c\
+	src/predicats.c
 
 SRC_BONUS =\
 	
