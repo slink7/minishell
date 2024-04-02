@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   header.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ymostows <ymostows@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 21:56:21 by scambier          #+#    #+#             */
-/*   Updated: 2024/04/02 10:03:09 by scambier         ###   ########.fr       */
+/*   Updated: 2024/04/02 15:22:43 by ymostows         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ typedef struct s_env
 	t_bst	*envp;
 	t_bst	*vars;
 	char	**exp;
-	int		last_status;
+	char	*last_status;
 }	t_env;
 
 int		env_init(t_env *env, char **envp);
