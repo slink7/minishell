@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 15:54:28 by scambier          #+#    #+#             */
-/*   Updated: 2024/04/02 10:05:11 by scambier         ###   ########.fr       */
+/*   Updated: 2024/04/02 13:52:42 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,9 +84,11 @@ int	main(int argc, char **argv, char **envp)
 		line = readline("\e[22;34mminishell>\e[0m");
 		if (!line)
 			break ;
-		if (*line)
+		if (ft_strchrf(line, s, 1))
+		{
 			add_history(line);
-		interpret(&line, &env);
+			interpret(&line, &env);
+		}
 		free(line);
 	}
 	env_deinit(&env);
