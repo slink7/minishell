@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ymostows <ymostows@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 17:08:05 by scambier          #+#    #+#             */
-/*   Updated: 2024/04/02 13:56:55 by scambier         ###   ########.fr       */
+/*   Updated: 2024/04/02 16:01:13 by ymostows         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,8 @@ int	exe_piped_commands(int cmdc, t_command *cmds, t_env *env)
 
 	env_export(env);
 	out = exe_piped_rec(cmdc, cmds, env);
-	env->last_status = out;
+	free(env->last_status);
+	env->last_status = ft_itoa(exitstatus(out));
 	printf("[%d]", exitstatus(out));
 	return (out);
 }

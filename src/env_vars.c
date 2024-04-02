@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_vars.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ymostows <ymostows@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 15:36:33 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/29 03:38:20 by scambier         ###   ########.fr       */
+/*   Updated: 2024/04/02 15:59:41 by ymostows         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ char	*env_var_get(t_env *env, char *name)
 {
 	t_bst	**var;
 
+	if (ft_strncmp(name, "?", ft_strlen(name)) == 0)
+		return (env->last_status);
 	var = ft_bst_find(&env->vars, name);
 	if (var != 0)
 		return ((*var)->var->value);

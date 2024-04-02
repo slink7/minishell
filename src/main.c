@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ymostows <ymostows@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 15:54:28 by scambier          #+#    #+#             */
-/*   Updated: 2024/04/02 15:32:59 by scambier         ###   ########.fr       */
+/*   Updated: 2024/04/02 16:06:03 by ymostows         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ int	main(int argc, char **argv, char **envp)
 	signal(SIGINT, sig_handler);
 	signal(SIGQUIT, sig_handler);
 	env_init(&env, envp);
-	while (env.last_status != -1)
+	while (ft_strncmp(env.last_status, "255", 4) != 0)
 	{
 		line = readline("\e[22;34mminishell>\e[0m");
 		if (!line)
