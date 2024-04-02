@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/01 14:48:42 by scambier          #+#    #+#             */
-/*   Updated: 2024/04/02 10:47:19 by scambier         ###   ########.fr       */
+/*   Updated: 2024/04/02 15:35:54 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,8 +103,10 @@ int	set_command_from_str(t_command *cmd, char *str)
 		if (!temp && ft_printf_fd(2, "Error : wrong file name"))
 			return (0);
 		unescape(temp);
-		set_cmd_fd(cmd, type, temp);
+		type = set_cmd_fd(cmd, type, temp);
 		free(temp);
+		if (!type)
+			return (0);
 		temp = nr + 1 + !!(type & TYPE_DOUBLE);
 		goto_falling_edge(&temp, s);
 		ft_strlcpy(nr, temp + 1, ft_strlen(temp));

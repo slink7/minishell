@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 15:54:28 by scambier          #+#    #+#             */
-/*   Updated: 2024/04/02 13:52:42 by scambier         ###   ########.fr       */
+/*   Updated: 2024/04/02 15:32:59 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,25 +20,30 @@
 #include "libft.h"
 #include "header.h"
 
-t_command	*parse(char **line, t_env *env)
+int	parse(t_command **out, char **line, t_env *env)
 {
 	int			k;
 	char		**commands;
-	t_command	*out;
 
 	expand_variables(line, env);
 	escape_quoted(*line);
 	commands = ft_split(*line, '|');
-	out = ft_calloc(ft_strarrlen(commands) + 1, sizeof(t_command));
+	*out = ft_calloc(ft_strarrlen(commands) + 1, sizeof(t_command));
+	if (!*out)
+		return (0);
 	k = -1;
 	while (commands[++k])
 	{
-		out[k].fd_in = 0;
-		out[k].fd_out = 1;
-		set_command_from_str(out + k, commands[k]);
+		(*out)[k].fd_in = 0;
+		(*out)[k].fd_out = 1;
+		if (!set_command_from_str((*out) + k, commands[k]))
+		{
+			ft_strarrfree(commands);
+			return (0);
+		}
 	}
 	ft_strarrfree(commands);
-	return (out);
+	return (1);
 }
 
 int	interpret(char **line, t_env *env)
@@ -46,11 +51,13 @@ int	interpret(char **line, t_env *env)
 	t_command	*cmds;
 	int			k;
 
-	cmds = parse(line, env);
-	k = -1;
-	while (cmds[++k].cmd)
-		;
-	exe_piped_commands(k, cmds, env);
+	if (parse(&cmds, line, env))
+	{
+		k = -1;
+		while (cmds[++k].cmd)
+			;
+		exe_piped_commands(k, cmds, env);
+	}
 	k = -1;
 	while (cmds[++k].cmd)
 		ft_strarrfree(cmds[k].cmd);
