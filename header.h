@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 21:56:21 by scambier          #+#    #+#             */
-/*   Updated: 2024/04/01 14:36:39 by scambier         ###   ########.fr       */
+/*   Updated: 2024/04/02 10:03:09 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,9 @@ int		here_doc(char *marker);
 int		exe_command(t_command *cmd, t_env *env);
 int		exe_piped_commands(int cmdc, t_command *cmds, t_env *env);
 
+//===REDIRECTIONS===
+int		set_command_from_str(t_command *cmd, char *str);
+
 //===UTILS===
 int		perror2(int ret, char *prompt);
 int		exitstatus(int status);
@@ -78,7 +81,7 @@ char	*is_executable(char *path, char *file);
 char	*find_executable(char **paths, char *file);
 
 //===PREDICATS===
-int	w(int c);
-int s(int c);
+int		w(int c);
+int		s(int c);
 
 #endif

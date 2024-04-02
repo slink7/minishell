@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 15:54:28 by scambier          #+#    #+#             */
-/*   Updated: 2024/04/01 14:35:57 by scambier         ###   ########.fr       */
+/*   Updated: 2024/04/02 10:05:11 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,117 +17,8 @@
 #include <readline/history.h>
 #include <signal.h>
 
-//#include <stdio.h>
-
 #include "libft.h"
 #include "header.h"
-
-int	cmd_setstream_fd(int *fd, int new_fd)
-{
-	if (!fd)
-		return (0);
-	if (*fd < 0 || *fd > 2)
-		close(*fd);
-	*fd = new_fd;
-	return (1);
-
-}
-
-int	cmd_setstream(int *fd, char *file, int flags, int perms)
-{
-	int	new_fd;
-
-	if (!file || !*file)
-		return (1);
-	new_fd = open(file, flags, perms);
-	if (new_fd == -1)
-		return (perror2(0, ERR_OPEN));
-	return (cmd_setstream_fd(fd, new_fd));
-}
-
-#define TYPE_IN1 1
-#define TYPE_OUT1 2
-#define TYPE_IN2 4
-#define TYPE_OUT2 8
-
-#define TYPE_IN 5
-#define TYPE_OUT 10
-#define TYPE_SIMPLE 3
-#define TYPE_DOUBLE 12
-
-int	next_redir(char *str, char **out)
-{
-	char	*temp;
-	int		type;
-
-	type = 0;
-	*out = ft_strchr(str, '<');
-	if (*out)
-		type = TYPE_IN1;
-	temp = ft_strchr(str, '>');
-	if (temp && (temp < *out || !*out))
-	{
-		*out = temp;
-		type = TYPE_OUT1;
-	}
-	temp = ft_strnstr(str, "<<", ft_strlen(str));
-	if (temp && (temp <= *out || !*out))
-	{
-		*out = temp;
-		type = TYPE_IN2;
-	}
-	temp = ft_strnstr(str, ">>", ft_strlen(str));
-	if (temp && (temp <= *out || !*out))
-	{
-		*out = temp;
-		type = TYPE_OUT2;
-	}
-	return (type);
-}
-
-int	set_command(t_command *cmd, char *str)
-{
-	char	*nr;
-	char	*file;
-	char	*cpy;
-	int		type;
-
-	type = next_redir(str, &nr);
-	while (type)
-	{
-		file = get_next_word(nr + 1 + !!(type & TYPE_DOUBLE), s);
-		if (!file)
-		{
-			ft_printf_fd(2, "Error : wrong file name");
-			return (0);
-		}
-		unescape(file);
-		if (type & TYPE_IN)
-		{
-			if (type & TYPE_DOUBLE)
-				cmd_setstream_fd(&cmd->fd_in, here_doc(file));
-			else
-				cmd_setstream(&cmd->fd_in, file, O_RDONLY, 0777);
-		}
-		else if (type & TYPE_OUT)
-		{
-			if (type & TYPE_DOUBLE)
-				cmd_setstream(&cmd->fd_out, file, O_WRONLY | O_APPEND | O_CREAT, 0644);
-			else
-				cmd_setstream(&cmd->fd_out, file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-		}
-		cpy = nr + 1 + !!(type & TYPE_DOUBLE);
-		goto_falling_edge(&cpy, s);
-		ft_strlcpy(nr, cpy + 1, cpy - nr);
-		free(file);
-		type = next_redir(nr, &nr);
-	}
-	cmd->cmd = ft_splitf(str, s);
-	type = -1;
-	while (cmd->cmd[++type])
-		unescape(cmd->cmd[type]);
-	return (1);
-}
 
 t_command	*parse(char **line, t_env *env)
 {
@@ -144,12 +35,11 @@ t_command	*parse(char **line, t_env *env)
 	{
 		out[k].fd_in = 0;
 		out[k].fd_out = 1;
-		set_command(out + k, commands[k]);
+		set_command_from_str(out + k, commands[k]);
 	}
 	ft_strarrfree(commands);
 	return (out);
 }
-
 
 int	interpret(char **line, t_env *env)
 {
@@ -191,9 +81,7 @@ int	main(int argc, char **argv, char **envp)
 	env_init(&env, envp);
 	while (env.last_status != -1)
 	{
-		char b[1024];
-		sprintf(b, "\e[22;34mminishell(%d)>\e[0m", getpid());
-		line = readline(b);
+		line = readline("\e[22;34mminishell>\e[0m");
 		if (!line)
 			break ;
 		if (*line)
