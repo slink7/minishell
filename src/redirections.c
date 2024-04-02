@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/01 14:48:42 by scambier          #+#    #+#             */
-/*   Updated: 2024/04/02 10:13:00 by scambier         ###   ########.fr       */
+/*   Updated: 2024/04/02 10:47:19 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,12 +46,10 @@ static int	replace_fd_file(int *fd, char *file, int flags, int perms)
 	return (replace_fd(fd, new_fd));
 }
 
-static int	next_redir(char *str, char **out)
+static int	next_redir(char *str, char **out, int type)
 {
 	char	*temp;
-	int		type;
 
-	type = 0;
 	*out = ft_strchr(str, '<');
 	if (*out)
 		type = TYPE_IN1;
@@ -76,8 +74,6 @@ static int	next_redir(char *str, char **out)
 	return (type);
 }
 
-#include <stdio.h>
-
 static int	set_cmd_fd(t_command *cmd, int type, char *file)
 {
 	int	out;
@@ -100,7 +96,7 @@ int	set_command_from_str(t_command *cmd, char *str)
 	char	*temp;
 	int		type;
 
-	type = next_redir(str, &nr);
+	type = next_redir(str, &nr, 0);
 	while (type)
 	{
 		temp = get_next_word(nr + 1 + !!(type & TYPE_DOUBLE), s);
@@ -112,7 +108,7 @@ int	set_command_from_str(t_command *cmd, char *str)
 		temp = nr + 1 + !!(type & TYPE_DOUBLE);
 		goto_falling_edge(&temp, s);
 		ft_strlcpy(nr, temp + 1, ft_strlen(temp));
-		type = next_redir(nr, &nr);
+		type = next_redir(nr, &nr, 0);
 	}
 	cmd->cmd = ft_splitf(str, s);
 	type = -1;
