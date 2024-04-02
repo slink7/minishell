@@ -30,9 +30,18 @@ int	builtin_env(int argc, char **argv, t_env *env)
 int	builtin_export(int argc, char **argv, t_env *env)
 {
 	t_bst	**bst;
+	char	*pos;
 
+	pos = ft_strchr(argv[1], '=');
 	if (argc == 1)
 		return (builtin_env(argc, argv, env));
+	else if (argc == 2 && pos != 0)
+	{
+		*pos = '\0';
+		env_var_set(env, argv[1], pos + 1);
+	}
+	if (ft_bst_find(&env->envp, argv[1]) != 0)
+		return (0);
 	bst = ft_bst_find(&env->vars, argv[1]);
 	if (bst != 0)
 		ft_bst_setvar(&env->envp, argv[1], (*bst)->var->value);
