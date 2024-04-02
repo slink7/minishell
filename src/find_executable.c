@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 21:37:56 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/27 14:57:21 by scambier         ###   ########.fr       */
+/*   Updated: 2024/04/02 13:56:32 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ char	*find_executable(char **paths, char *file)
 		if (out)
 			return (out);
 	}
-	while (*paths)
+	while (paths && *paths)
 	{
 		out = is_executable(paths[0], file);
 		if (out)
