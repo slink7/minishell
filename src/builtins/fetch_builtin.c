@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 19:55:06 by scambier          #+#    #+#             */
-/*   Updated: 2024/03/26 22:06:51 by scambier         ###   ########.fr       */
+/*   Updated: 2024/04/05 16:08:23 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ int	(*fetch_builtin(char *cmd))(int argc, char **argv, t_env *env)
 
 	k = -1;
 	while (dict[++k].name)
-		if (ft_strncmp(cmd, dict[k].name, ft_strlen(cmd)) == 0)
+		if (ft_strncmp(cmd, dict[k].name, ft_strlen(cmd) + 1) == 0)
 			return (dict[k].builtin);
 	return (0);
 }
