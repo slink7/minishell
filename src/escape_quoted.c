@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/13 17:47:16 by scambier          #+#    #+#             */
-/*   Updated: 2024/04/05 15:26:34 by scambier         ###   ########.fr       */
+/*   Updated: 2024/04/05 15:37:58 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,5 +33,4 @@ void	escape_quoted(char *str)
 			fk = next - str - 2;
 		}
 	}
-	ft_printf_fd(1, "a:%s.\n", str);
 }
