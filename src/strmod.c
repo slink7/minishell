@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/13 17:50:35 by scambier          #+#    #+#             */
-/*   Updated: 2024/04/01 14:36:04 by scambier         ###   ########.fr       */
+/*   Updated: 2024/04/05 15:25:08 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,6 @@ void	strnesc(char *str, int len)
 	if (len > 0)
 		while (--len >= 0)
 			str[len] -= (str[len] >= 0) * 128;
-	else
-		strnesc(str, ft_strlen(str));
 }
 
 void	strend(char *str)
