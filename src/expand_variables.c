@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/13 17:37:27 by scambier          #+#    #+#             */
-/*   Updated: 2024/04/01 14:34:43 by scambier         ###   ########.fr       */
+/*   Updated: 2024/04/05 15:25:34 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ static void	add_var(t_strbuilder *builder, char *str, int *at, t_env *env)
 		if (temp && *temp)
 		{
 			temp = ft_strdup(temp);
-			strnesc(temp, 0);
+			strnesc(temp, ft_strlen(temp));
 			ft_strbuilder_addstr(builder, temp, 0);
 			free(temp);
 		}
