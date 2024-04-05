@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ymostows <ymostows@student.42.fr>          +#+  +:+       +#+        */
+/*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 17:08:05 by scambier          #+#    #+#             */
-/*   Updated: 2024/04/02 16:01:13 by ymostows         ###   ########.fr       */
+/*   Updated: 2024/04/05 16:00:12 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ static int	exe_executable(char **arr_cmd, t_env *env)
 		ft_strarrfree(paths);
 	if (!exe_path)
 	{
-		ft_printf_fd(2, "minishell: Command '%s' not found\n", arr_cmd[0]);
+		write(2, "minishell: Command not found\n", 30);
 		return (32512);
 	}
 	status = execve_wrap(exe_path, arr_cmd, env->exp);
