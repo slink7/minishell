@@ -6,7 +6,7 @@
 /*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/01 14:48:42 by scambier          #+#    #+#             */
-/*   Updated: 2024/04/02 15:35:54 by scambier         ###   ########.fr       */
+/*   Updated: 2024/04/05 16:26:16 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,9 +112,5 @@ int	set_command_from_str(t_command *cmd, char *str)
 		ft_strlcpy(nr, temp + 1, ft_strlen(temp));
 		type = next_redir(nr, &nr, 0);
 	}
-	cmd->cmd = ft_splitf(str, s);
-	type = -1;
-	while (cmd->cmd[++type])
-		unescape(cmd->cmd[type]);
 	return (1);
 }

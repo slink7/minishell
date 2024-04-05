@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ymostows <ymostows@student.42.fr>          +#+  +:+       +#+        */
+/*   By: scambier <scambier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 15:54:28 by scambier          #+#    #+#             */
-/*   Updated: 2024/04/02 16:06:03 by ymostows         ###   ########.fr       */
+/*   Updated: 2024/04/05 16:33:55 by scambier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,19 @@
 
 #include "libft.h"
 #include "header.h"
+
+static int	word_split(t_command *dst, char *str)
+{
+	int	k;
+
+	dst->cmd = ft_splitf(str, s);
+	if (ft_strarrlen(dst->cmd) == 0)
+		return (0);
+	k = -1;
+	while (dst->cmd[++k])
+		unescape(dst->cmd[k]);
+	return (1);
+}
 
 int	parse(t_command **out, char **line, t_env *env)
 {
@@ -36,7 +49,8 @@ int	parse(t_command **out, char **line, t_env *env)
 	{
 		(*out)[k].fd_in = 0;
 		(*out)[k].fd_out = 1;
-		if (!set_command_from_str((*out) + k, commands[k]))
+		if (!set_command_from_str((*out) + k, commands[k])
+			|| !word_split((*out) + k, commands[k]))
 		{
 			ft_strarrfree(commands);
 			return (0);
